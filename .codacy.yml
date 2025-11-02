@@ -1,8 +1,10 @@
 tools:
-  - name: trivy
+  trivy:
     enabled: true
     patterns:
-      - ALL
+      - vuln
+      - secret
+      - config
   eslint-8:
     enabled: true
   pmd-7:
