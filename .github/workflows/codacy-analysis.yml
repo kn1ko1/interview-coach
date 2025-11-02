@@ -39,7 +39,6 @@ jobs:
             --format text \
             --output "${{ github.workspace }}/codacy-analysis.txt" \
             --provider gh \
-            --organization kn1ko1 \
             --repository interview-coach
 
       - name: Run Codacy Trivy scan
@@ -51,7 +50,6 @@ jobs:
             --format text \
             --output "${{ github.workspace }}/codacy-trivy.txt" \
             --provider gh \
-            --organization kn1ko1 \
             --repository interview-coach
 
       - name: Upload results
