@@ -38,8 +38,7 @@ jobs:
             --directory "${{ github.workspace }}" \
             --format text \
             --output "${{ github.workspace }}/codacy-analysis.txt" \
-            --provider gh \
-            --repository interview-coach
+            --provider gh
 
       - name: Run Codacy Trivy scan
         run: |
@@ -49,8 +48,7 @@ jobs:
             --allow-network \
             --format text \
             --output "${{ github.workspace }}/codacy-trivy.txt" \
-            --provider gh \
-            --repository interview-coach
+            --provider gh
 
       - name: Upload results
         uses: actions/upload-artifact@v4
