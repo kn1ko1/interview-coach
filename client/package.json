@@ -1,0 +1,27 @@
+{
+  "name": "interview-coach",
+  "version": "1.0.0",
+  "description": "A web application that provides users with strong and generic answers to interview questions, allowing them to input specific words related to their role or skill, upload their CV, and receive an employability score.",
+  "main": "src/main.tsx",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "axios": "^0.21.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.2",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.7"
+  },
+  "homepage": ".",
+  "license": "MIT"
+}
