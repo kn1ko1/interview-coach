@@ -1,0 +1,63 @@
+name: Codacy Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  codacy-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies (server)
+        run: |
+          npm --prefix server install
+
+      - name: Download Codacy CLI
+        run: |
+          curl -L "https://github.com/codacy/codacy-analysis-cli/releases/latest/download/codacy-analysis-cli-assembly.jar" -o /tmp/codacy-cli.jar
+          ls -lh /tmp/codacy-cli.jar
+
+      - name: Run Codacy full analysis
+        run: |
+          java -jar /tmp/codacy-cli.jar analyze \
+            --directory "${{ github.workspace }}" \
+            --format text \
+            --output "${{ github.workspace }}/codacy-analysis.txt" \
+            --provider gh \
+            --organization kn1ko1 \
+            --repository interview-coach
+
+      - name: Run Codacy Trivy scan
+        run: |
+          java -jar /tmp/codacy-cli.jar analyze \
+            --directory "${{ github.workspace }}" \
+            --tool trivy \
+            --allow-network \
+            --format text \
+            --output "${{ github.workspace }}/codacy-trivy.txt" \
+            --provider gh \
+            --organization kn1ko1 \
+            --repository interview-coach
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: codacy-reports
+          path: |
+            codacy-analysis.txt
+            codacy-trivy.txt

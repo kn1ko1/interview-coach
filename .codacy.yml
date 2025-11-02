@@ -1,0 +1,12 @@
+tools:
+  trivy:
+    enabled: true
+    patterns:
+      - "package-lock.json"
+      - "server/package-lock.json"
+      - "package.json"
+      - "server/package.json"
+  eslint-8:
+    enabled: true
+  pmd-7:
+    enabled: true
