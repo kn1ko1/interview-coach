@@ -29,8 +29,8 @@ class AIService {
         // Placeholder for keyword analysis logic
         return `Analyzed keywords: ${keywords.join(', ')}`;
     }
-
-    export async function generateAnswersRAG(cvText: string, jobText: string) {
+    
+    public static async generateAnswersRAG(cvText: string, jobText: string) {
         const now = Date.now();
         const cvEmb = await embedText(cvText || "");
         const jobEmb = await embedText(jobText || "");

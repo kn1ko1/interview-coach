@@ -1,26 +1,29 @@
-import express from "express";
-import { generateAnswersRAG } from "../services/aiService";
+import express, { Request, Response } from "express";
+import AIService from "../services/aiService";
 import { scoreAnswersWithEmbeddings } from "../services/scoringService";
 
 const router = express.Router();
 
-router.post("/generate", async (req, res) => {
+router.post("/generate", async (req: Request, res: Response) => {
   try {
-    const { cv, job } = req.body;
-    const out = await generateAnswersRAG(cv || "", job || "");
+    const { cv, job } = req.body as { cv?: string; job?: string };
+    const out = await AIService.generateAnswersRAG(cv ?? "", job ?? "");
     res.json(out);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err?.message ?? String(err) });
   }
 });
 
-router.post("/score", async (req, res) => {
+router.post("/score", async (req: Request, res: Response) => {
   try {
-    const { job, answers } = req.body;
-    const out = await scoreAnswersWithEmbeddings(job || "", answers || []);
+    const { job, answers } = req.body as {
+      job?: string;
+      answers?: Array<{ questionId: string; userAnswer: string }>;
+    };
+    const out = await scoreAnswersWithEmbeddings(job ?? "", answers ?? []);
     res.json(out);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err?.message ?? String(err) });
   }
 });
 

@@ -8,10 +8,9 @@ const client = new QdrantClient({ url: QDRANT_URL, apiKey: QDRANT_API_KEY || und
 
 async function ensureCollection() {
     try {
-        await client.getCollection({ collectionName: COLLECTION });
+        await client.getCollection(COLLECTION);
     } catch {
-        await client.createCollection({
-            collectionName: COLLECTION,
+        await client.createCollection(COLLECTION, {
             vectors: { size: Number(process.env.EMBEDDING_DIM || 1536), distance: "Cosine" },
         });
     }
@@ -19,19 +18,17 @@ async function ensureCollection() {
 
 export async function upsertDocument(id: string, vector: number[], meta: Record<string, any>) {
     await ensureCollection();
-    await client.upsert({
-        collectionName: COLLECTION,
+    await client.upsert(COLLECTION, {
         points: [{ id, vector, payload: meta }],
     });
 }
 
 export async function querySimilar(vector: number[], topK = 5) {
     await ensureCollection();
-    const resp = await client.search({
-        collectionName: COLLECTION,
+    const resp = await client.search(COLLECTION, {
         vector,
         limit: topK,
-        withPayload: true,
+        with_payload: true,
     });
     return resp;
 }
