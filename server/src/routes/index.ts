@@ -1,16 +1,15 @@
-import { Router } from 'express';
-import InterviewController from '../controllers/interviewController';
-import AuthController from '../controllers/authController';
+import express, { Express } from "express";
+import { getInterviewQuestions, handleInterview } from "../controllers/interviewController";
+import aiRoutes from "./aiRoutes";
 
-const router = Router();
+const router = express.Router();
 
-// Interview routes
-router.post('/interview', InterviewController.handleInterview);
-router.post('/upload-cv', InterviewController.uploadCV);
-router.get('/employability-score', InterviewController.getEmployabilityScore);
+router.get("/interview/questions", getInterviewQuestions);
+router.post("/interview", handleInterview);
+router.use("/ai", aiRoutes);
 
-// Authentication routes
-router.post('/login', AuthController.login);
-router.post('/register', AuthController.register);
+export function initRoutes(app: Express) {
+  app.use("/api", router);
+}
 
 export default router;
