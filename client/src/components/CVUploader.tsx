@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const CVUploader: React.FC = () => {
+interface CVUploaderProps {
+  onUpload: (file: File) => void;
+}
+
+const CVUploader: React.FC<CVUploaderProps> = ({ onUpload }) => {
     const [file, setFile] = useState<File | null>(null);
     const [uploadStatus, setUploadStatus] = useState<string>('');
 
@@ -28,6 +32,7 @@ const CVUploader: React.FC = () => {
 
             if (response.ok) {
                 setUploadStatus('CV uploaded successfully!');
+                onUpload(file);
             } else {
                 setUploadStatus('Failed to upload CV. Please try again.');
             }

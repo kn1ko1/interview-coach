@@ -1,66 +1,46 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from '../App';
+import '../index.css';
+import { useLocation } from 'react-router-dom';
 
-const useAuth = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+interface CVUploaderProps {
+  onUpload: (file: File) => void;
+}
+const CVUploader: React.FC<CVUploaderProps> = ({ onUpload }) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) onUpload(file);
+  };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch('/api/auth/user');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user');
-                }
-                const data = await response.json();
-                setUser(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUser();
-    }, []);
-
-    const login = async (credentials) => {
-        setLoading(true);
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(credentials),
-            });
-            if (!response.ok) {
-                throw new Error('Login failed');
-            }
-            const data = await response.json();
-            setUser(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const logout = async () => {
-        setLoading(true);
-        try {
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-            });
-            setUser(null);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return { user, loading, error, login, logout };
+  return React.createElement('input', { type: 'file', accept: '.pdf,.doc,.docx', onChange });
 };
 
-export default useAuth;
+ReactDOM.render(
+  React.createElement(React.StrictMode, null,
+    React.createElement(App, null)
+  ),
+  document.getElementById('root')
+);
+
+const handleResponseChange = (response: string) => {
+  console.log(response);
+};
+
+export const uploadCV = async (formData: FormData) => {
+  try {
+    // ...
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error('Error uploading CV: ' + error.message);
+    }
+    throw new Error('Error uploading CV: Unknown error');
+  }
+};
+
+interface ResultsState {
+  score: number;
+  responses: any[];
+}
+const location = useLocation();
+const { score, responses } = (location.state as ResultsState) || { score: 0, responses: [] };

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const KeywordInput: React.FC = () => {
+interface KeywordInputProps {
+  onChange: (newKeywords: string[]) => void;
+}
+
+const KeywordInput: React.FC<KeywordInputProps> = ({ onChange }) => {
     const [keywords, setKeywords] = useState<string>('');
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -10,7 +14,7 @@ const KeywordInput: React.FC = () => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // Handle the submission of keywords (e.g., send to API or process further)
-        console.log('Keywords submitted:', keywords);
+        onChange(keywords.split(',').map(k => k.trim()));
     };
 
     return (
