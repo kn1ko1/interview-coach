@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import { initRoutes } from './routes'; // adjust path if different
+import path from 'path';
 
 const app = express();
 const server = createServer(app);
@@ -34,6 +35,14 @@ app.get('/', (req, res) => {
 // Serve empty response for Chrome DevTools probe
 app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
   res.status(204).end();
+});
+
+// Serve React static files
+app.use(express.static(path.join(__dirname, '../../client/build')));
+
+// For any other route, serve index.html (SPA fallback)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
 });
 
 // Start the server
