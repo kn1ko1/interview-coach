@@ -8,11 +8,11 @@ export class InterviewController {
     public async getInterviewQuestions(req: Request, res: Response): Promise<Response> {
         try {
             // AIService may expose static helpers; call safely with fallback
-            const questions = await (AIService as any).getInterviewQuestions?.() ?? [];
+             const questions = await (AIService as unknown).getInterviewQuestions?.() ?? [];
             return res.json(questions);
-        } catch (error: any) {
+          } catch (error: unknown) {
             console.error(error);
-            return res.status(500).json({ message: 'Error retrieving interview questions', error: error?.message || error });
+            return res.status(500).json({ message: 'Error retrieving interview questions', error: (error as Error)?.message || error });
         }
     }
 
@@ -20,7 +20,6 @@ export class InterviewController {
         const { responses, cv, keywords, name, email } = req.body;
 
         try {
-            // build plain candidate shape for scoring service
             // build plain candidate shape for scoring service
             const candidate = {
                 name: name ?? 'anonymous',
@@ -30,9 +29,9 @@ export class InterviewController {
                 responses: Array.isArray(responses) ? responses : [],
             };
 
-            const score = await Promise.resolve(this.scoringService.calculateScore(candidate));
+              const score = this.scoringService.calculateScore(candidate as unknown);
             return res.json({ score });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             return res.status(500).json({ message: 'Error processing responses', error: error?.message || error });
         }

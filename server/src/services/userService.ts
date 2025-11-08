@@ -15,7 +15,7 @@ try {
 export interface UserData {
   email: string;
   password: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export class UserService {
@@ -23,7 +23,7 @@ export class UserService {
    * Create a new user (placeholder implementation).
    * Replace with real DB logic, validation and password hashing.
    */
-  public async createUser(userData: UserData): Promise<any> {
+    public async createUser(userData: UserData): Promise<unknown> {
     if (!userData || !userData.email) {
       throw new Error('Missing required user data (email).');
     }
@@ -42,7 +42,7 @@ export class UserService {
    * Authenticate a user (placeholder).
    * Replace with real authentication: lookup user, compare hashed password, etc.
    */
-  public async authenticateUser(email: string, password: string): Promise<unknown | null> {
+   public async authenticateUser(email: string, password: string): Promise<unknown | null> {
     if (!email || !password) return null;
     // Development stub: accept any non-empty credentials.
     return {

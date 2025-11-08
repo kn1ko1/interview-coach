@@ -22,8 +22,7 @@ class AIService {
     };
 
     public static getAnswer(question: string): string {
-        return this.genericAnswers[question] || "That's a great question! Can you provide more context?";
-    }
+         return this.genericAnswers[question] || "That's a great question! Can you provide more context?";
 
     public static analyzeKeywords(keywords: string[]): string {
         // Placeholder for keyword analysis logic
