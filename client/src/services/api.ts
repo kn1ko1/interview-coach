@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:500
 
 export const uploadCV = async (formData: FormData): Promise<any> => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/upload-cv`, formData, {
+          const response = await axios.post(`${API_BASE_URL}/upload-cv`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
         return response.data;
