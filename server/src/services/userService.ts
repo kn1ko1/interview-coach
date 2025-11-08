@@ -12,6 +12,47 @@ try {
   UserModel = require("../models/candidate").default;
 }
 
+export interface UserData {
+  email: string;
+  password: string;
+  [key: string]: any;
+}
+
+export class UserService {
+  /**
+   * Create a new user (placeholder implementation).
+   * Replace with real DB logic, validation and password hashing.
+   */
+  public async createUser(userData: UserData): Promise<any> {
+    if (!userData || !userData.email) {
+      throw new Error('Missing required user data (email).');
+    }
+
+    // NOTE: do NOT return the password. This is a minimal stub.
+    const { password, ...safe } = userData as any;
+
+    // Simulate created user
+    return {
+      id: `user_${Date.now()}`,
+      ...safe,
+    };
+  }
+
+  /**
+   * Authenticate a user (placeholder).
+   * Replace with real authentication: lookup user, compare hashed password, etc.
+   */
+  public async authenticateUser(email: string, password: string): Promise<any | null> {
+    if (!email || !password) return null;
+
+    // Development stub: accept any non-empty credentials.
+    return {
+      id: `user_${Date.now()}`,
+      email,
+    };
+  }
+}
+
 export async function findUserByEmail(email: string) {
   return UserModel.findOne({ email }).lean();
 }

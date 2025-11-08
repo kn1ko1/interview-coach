@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import { initRoutes } from './routes'; // adjust path if different
+import initRoutes from './routes'; // adjust path if different
 import path from 'path';
 
 const app = express();

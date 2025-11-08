@@ -13,8 +13,12 @@ export class AuthController {
             const userData = req.body;
             const newUser = await this.userService.createUser(userData);
             res.status(201).json(newUser);
-        } catch (error) {
-            res.status(400).json({ message: error.message });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(400).json({ message: String(error) });
+            }
         }
     }
 
@@ -27,17 +31,25 @@ export class AuthController {
             } else {
                 res.status(401).json({ message: 'Invalid credentials' });
             }
-        } catch (error) {
-            res.status(400).json({ message: error.message });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(400).json({ message: error.message });
+            } else {
+                res.status(400).json({ message: String(error) });
+            }
         }
     }
 
     public async logout(req: Request, res: Response): Promise<void> {
         try {
-            // Logic for logging out the user (e.g., clearing session)
+            // Adjust this to your actual logout logic (clear cookies, revoke tokens, etc.)
             res.status(200).json({ message: 'Logout successful' });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(500).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: String(error) });
+            }
         }
     }
 }
