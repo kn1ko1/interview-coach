@@ -1,29 +1,29 @@
-import { Request, Response } from 'express';
-import { ScoringService } from '../services/scoringService';
-import AIService from '../services/aiService';
-
-export class InterviewController {
-    private scoringService: ScoringService;
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InterviewController = void 0;
+const scoringService_1 = require("../services/scoringService");
+const aiService_1 = __importDefault(require("../services/aiService"));
+class InterviewController {
     constructor() {
         // ScoringService constructor accepts optional criteria
-        this.scoringService = new ScoringService();
+        this.scoringService = new scoringService_1.ScoringService();
     }
-
-    public async getInterviewQuestions(req: Request, res: Response): Promise<Response> {
+    async getInterviewQuestions(req, res) {
         try {
             // AIService exposes static helpers
-            const questions = await (AIService as any).getInterviewQuestions?.() ?? [];
+            const questions = await aiService_1.default.getInterviewQuestions?.() ?? [];
             return res.json(questions);
-        } catch (error: any) {
+        }
+        catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Error retrieving interview questions', error: error?.message || error });
         }
     }
-
-    public async submitResponses(req: Request, res: Response): Promise<Response> {
+    async submitResponses(req, res) {
         const { responses, cv, keywords, name, email } = req.body;
-
         try {
             // build a plain candidate shape that ScoringService expects
             const candidate = {
@@ -33,42 +33,43 @@ export class InterviewController {
                 keywords: Array.isArray(keywords) ? keywords : [],
                 responses: Array.isArray(responses) ? responses : [],
             };
-
-            const score = this.scoringService.calculateScore(candidate as any);
+            const score = this.scoringService.calculateScore(candidate);
             return res.json({ score });
-        } catch (error: any) {
+        }
+        catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Error processing responses', error: error?.message || error });
         }
     }
-
     // route-compatible adapters required by routes/index.ts
-    public async handleInterview(req: Request, res: Response): Promise<Response> {
+    async handleInterview(req, res) {
         // POST /interview -> reuse submitResponses
         return this.submitResponses(req, res);
     }
-
-    public async uploadCV(req: Request, res: Response): Promise<Response> {
+    async uploadCV(req, res) {
         try {
             // If multer is used, file will be on req.file
-            const file = (req as any).file;
-            if (!file) return res.status(400).json({ message: 'No file uploaded' });
+            const file = req.file;
+            if (!file)
+                return res.status(400).json({ message: 'No file uploaded' });
             return res.json({ message: 'CV uploaded', filename: file.filename ?? file.originalname });
-        } catch (error: any) {
+        }
+        catch (error) {
             console.error(error);
             return res.status(500).json({ message: error?.message || 'Upload failed' });
         }
     }
-
-    public async getEmployabilityScore(req: Request, res: Response): Promise<Response> {
+    async getEmployabilityScore(req, res) {
         try {
             // Minimal implementation: accept candidate id or return 0
             const { candidateId } = req.query;
             // TODO: lookup candidate by id and return stored score
             return res.json({ candidateId: candidateId ?? null, score: 0 });
-        } catch (error: any) {
+        }
+        catch (error) {
             console.error(error);
             return res.status(500).json({ message: error?.message || 'Failed to get score' });
         }
     }
 }
+exports.InterviewController = InterviewController;

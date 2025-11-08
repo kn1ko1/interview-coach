@@ -1,19 +1,12 @@
 import multer from 'multer';
-import path from 'path';
 
-// Set up storage configuration for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Specify the directory to store uploaded files
+  destination: (req: any, file: any, cb: any) => {
+    cb(null, 'uploads/');
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); // Create a unique filename
-  }
+  filename: (req: any, file: any, cb: any) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
 });
 
-// Create the multer instance for handling file uploads
-const upload = multer({ storage: storage });
-
-// Export the upload middleware for use in routes
-export default upload;
+export default multer({ storage });

@@ -1,4 +1,4 @@
-import { Candidate } from '../models/candidate';
+import type { CandidateData } from '../models/candidate';
 
 export interface ScoringCriteria {
     keywordsWeight: number;
@@ -9,11 +9,11 @@ export interface ScoringCriteria {
 export class ScoringService {
     private criteria: ScoringCriteria;
 
-    constructor(criteria: ScoringCriteria) {
-        this.criteria = criteria;
+    constructor(criteria?: ScoringCriteria) {
+        this.criteria = criteria ?? ({} as ScoringCriteria);
     }
 
-    public calculateScore(candidate: Candidate): number {
+    public calculateScore(candidate: CandidateData): number {
         const keywordScore = this.calculateKeywordScore(candidate.keywords);
         const cvScore = this.calculateCvScore(candidate.cv);
         const responseScore = this.calculateResponseScore(candidate.responses);
