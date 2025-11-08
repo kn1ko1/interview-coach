@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ScoringService from '../services/scoringService';
+import { ScoringService } from '../services/scoringService';
 import AIService from '../services/aiService';
 
 export class InterviewController {
@@ -8,11 +8,11 @@ export class InterviewController {
     public async getInterviewQuestions(req: Request, res: Response): Promise<Response> {
         try {
             // AIService may expose static helpers; call safely with fallback
-             const questions = await (AIService as unknown).getInterviewQuestions?.() ?? [];
+             const questions = await (AIService as any).getInterviewQuestions?.() ?? [];
             return res.json(questions);
           } catch (error: unknown) {
             console.error(error);
-            return res.status(500).json({ message: 'Error retrieving interview questions', error: (error as Error)?.message || error });
+            return res.status(500).json({ message: 'Error retrieving interview questions', error: (error as Error).message || error });
         }
     }
 

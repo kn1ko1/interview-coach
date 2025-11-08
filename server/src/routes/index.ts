@@ -23,6 +23,6 @@ router.post("/register", authController.register.bind(authController));
 router.use("/ai", aiRoutes);
 
 // keep a default function export that registers the router
-export default function initRoutes(app: Express, _server?: unknown, _opts?: any) {
+export default function initRoutes(app: Express, _server?: unknown, _opts?: unknown) {
   app.use("/api", router);
 }
