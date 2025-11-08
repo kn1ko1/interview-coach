@@ -42,9 +42,8 @@ export class UserService {
    * Authenticate a user (placeholder).
    * Replace with real authentication: lookup user, compare hashed password, etc.
    */
-  public async authenticateUser(email: string, password: string): Promise<any | null> {
+  public async authenticateUser(email: string, password: string): Promise<unknown | null> {
     if (!email || !password) return null;
-
     // Development stub: accept any non-empty credentials.
     return {
       id: `user_${Date.now()}`,
