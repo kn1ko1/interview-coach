@@ -7,33 +7,36 @@ export class InterviewController {
 
     public async getInterviewQuestions(req: Request, res: Response): Promise<Response> {
         try {
-            // AIService may expose static helpers; call safely with fallback
-             const questions = await (AIService as any).getInterviewQuestions?.() ?? [];
+            // Type assertion for AIService to access its methods
+            const service = AIService as { getInterviewQuestions?: () => Promise<unknown[]> };
+            const questions = await service.getInterviewQuestions?.() ?? [];
             return res.json(questions);
-          } catch (error: unknown) {
+        } catch (error: unknown) {
             console.error(error);
-            return res.status(500).json({ message: 'Error retrieving interview questions', error: (error as Error).message || error });
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return res.status(500).json({ message: 'Error retrieving interview questions', error: errorMessage });
         }
     }
 
     public async submitResponses(req: Request, res: Response): Promise<Response> {
-        const { responses, cv, keywords, name, email } = req.body;
+        const { responses, keywords } = req.body;
 
         try {
-            // build plain candidate shape for scoring service
-            const candidate = {
-                name: name ?? 'anonymous',
-                email: email ?? 'unknown',
-                cv: cv ?? '',
-                keywords: Array.isArray(keywords) ? keywords : [],
-                responses: Array.isArray(responses) ? responses : [],
+            // build candidate data matching ScoringService expected type
+            const candidateData = {
+                responses: Array.isArray(responses) ? responses.reduce((acc: Record<string, unknown>, r: unknown, i: number) => {
+                    acc[`q${i + 1}`] = r;
+                    return acc;
+                }, {}) : {},
+                keywords: Array.isArray(keywords) ? keywords : []
             };
 
-              const score = this.scoringService.calculateScore(candidate as unknown);
+            const score = this.scoringService.calculateScore(candidateData);
             return res.json({ score });
         } catch (error: unknown) {
             console.error(error);
-            return res.status(500).json({ message: 'Error processing responses', error: error?.message || error });
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return res.status(500).json({ message: 'Error processing responses', error: errorMessage });
         }
     }
 }
