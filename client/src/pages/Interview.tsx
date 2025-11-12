@@ -7,27 +7,27 @@ import { calculateScore } from '../services/api';
 
 const Interview = () => {
     const [responses, setResponses] = useState({});
-    const [keywords, setKeywords] = useState([]);
-    const [cv, setCv] = useState(null);
-    const [score, setScore] = useState(null);
+    const [keywords, setKeywords] = useState<string[]>([]);
+    const [cv, setCv] = useState<File | null>(null);
+    const [score, setScore] = useState<number | null>(null);
 
-    const handleResponseChange = (questionId, answer) => {
+    const handleResponseChange = (questionId: string, answer: string) => {
         setResponses(prevResponses => ({
             ...prevResponses,
             [questionId]: answer,
         }));
     };
 
-    const handleKeywordChange = (newKeywords) => {
+    const handleKeywordChange = (newKeywords: string[]) => {
         setKeywords(newKeywords);
     };
 
-    const handleCvUpload = (uploadedCv) => {
+    const handleCvUpload = (uploadedCv: File | null) => {
         setCv(uploadedCv);
     };
 
     const handleSubmit = async () => {
-        const calculatedScore = await calculateScore(responses, keywords, cv);
+        const calculatedScore = await calculateScore({ responses, keywords, cvId: cv?.name });
         setScore(calculatedScore);
     };
 
@@ -36,9 +36,9 @@ const Interview = () => {
             <h1>Interview Preparation</h1>
             <CVUploader onUpload={handleCvUpload} />
             <KeywordInput onChange={handleKeywordChange} />
-            <QuestionCard questionId="1" onResponseChange={handleResponseChange} />
-            <QuestionCard questionId="2" onResponseChange={handleResponseChange} />
-            <QuestionCard questionId="3" onResponseChange={handleResponseChange} />
+            <QuestionCard question="1" onChange={(answer: string) => handleResponseChange("1", answer)} />
+            <QuestionCard question="2" onChange={(answer: string) => handleResponseChange("2", answer)} />
+            <QuestionCard question="3" onChange={(answer: string) => handleResponseChange("3", answer)} />
             <button onClick={handleSubmit}>Submit</button>
             {score !== null && <ScoreBadge score={score} />}
         </div>

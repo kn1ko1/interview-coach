@@ -24,3 +24,33 @@ export async function scoreAnswersWithEmbeddings(jobText: string, answers: Answe
   const overall = Math.round(perQuestion.reduce((s, r) => s + r.score, 0) / perQuestion.length || 0);
   return { perQuestion, overall };
 }
+
+export interface CandidateData {
+    responses: Record<string, unknown>;
+    keywords?: string[];
+    cvId?: string;
+}
+
+export class ScoringService {
+    /**
+     * Calculate employability score based on candidate responses and keywords.
+     * This is a placeholder implementation for the MVP.
+     */
+    public calculateScore(candidateData: CandidateData): number {
+        const { responses, keywords = [] } = candidateData;
+        
+        // Simple scoring logic for MVP
+        let score = 0;
+        
+        // Score based on number of responses (max 50 points)
+        const responseCount = Object.keys(responses).length;
+        score += Math.min(responseCount * 10, 50);
+        
+        // Score based on keywords mentioned (max 50 points)
+        const keywordCount = keywords.length;
+        score += Math.min(keywordCount * 5, 50);
+        
+        // Normalize to 0-100
+        return Math.min(Math.max(score, 0), 100);
+    }
+}
