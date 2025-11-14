@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 const useAuth = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -15,7 +15,7 @@ const useAuth = () => {
                 const data = await response.json();
                 setUser(data);
             } catch (err) {
-                setError(err.message);
+                setError(err instanceof Error ? err.message : 'An error occurred');
             } finally {
                 setLoading(false);
             }
@@ -24,7 +24,7 @@ const useAuth = () => {
         fetchUser();
     }, []);
 
-    const login = async (credentials) => {
+    const login = async (credentials: { email: string; password: string }) => {
         setLoading(true);
         try {
             const response = await fetch('/api/auth/login', {
@@ -40,7 +40,7 @@ const useAuth = () => {
             const data = await response.json();
             setUser(data);
         } catch (err) {
-            setError(err.message);
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
         }
@@ -54,7 +54,7 @@ const useAuth = () => {
             });
             setUser(null);
         } catch (err) {
-            setError(err.message);
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
         }

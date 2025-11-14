@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 
 interface QuestionCardProps {
     question: string;
-    onAnswer: (answer: string) => void;
+    onResponseChange: (questionId: string, answer: string) => void;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, onResponseChange }) => {
     const [answer, setAnswer] = useState('');
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setAnswer(event.target.value);
+        onResponseChange(question, event.target.value);
     };
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        onAnswer(answer);
-        setAnswer('');
+        onResponseChange(question, answer);
     };
 
     return (

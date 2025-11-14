@@ -4,7 +4,7 @@ import ScoreBadge from '../components/ScoreBadge';
 
 const Results: React.FC = () => {
     const location = useLocation();
-    const { score, responses } = location.state || { score: 0, responses: [] };
+    const { score, responses } = (location.state as { score: number; responses: string[] }) || { score: 0, responses: [] };
 
     return (
         <div className="results-container">

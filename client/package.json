@@ -2,7 +2,6 @@
   "name": "interview-coach",
   "version": "1.0.0",
   "description": "A web application that provides users with strong and generic answers to interview questions, allowing them to input specific words related to their role or skill, upload their CV, and receive an employability score.",
-  "main": "src/main.tsx",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -10,18 +9,47 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3"
+    "react-scripts": "5.0.1"
   },
   "devDependencies": {
-    "@types/react": "^17.0.89",
-    "@types/react-dom": "^17.0.26",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.7",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "vitest": "^0.34.6"
+  },
+  "overrides": {
+    "shell-quote": "1.7.3",
+    "loader-utils": "2.0.4",
+    "semver": "7.5.4",
+    "braces": "3.0.3",
+    "ansi-html": "0.0.9",
+    "lodash.template": "4.5.0",
+    "rollup": "2.79.1",
+    "immer": "9.0.21",
+    "nth-check": "2.1.1",
+    "node-forge": "1.3.1",
+    "http-proxy-middleware": "2.0.7",
+    "ejs": "3.1.10"
   },
   "homepage": ".",
-  "license": "MIT"
+  "license": "MIT",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
