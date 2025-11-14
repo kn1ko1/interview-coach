@@ -22,7 +22,10 @@ class AIService {
     };
 
     public static getAnswer(question: string): string {
-         return this.genericAnswers[question] || "That's a great question! Can you provide more context?";
+         if (Object.prototype.hasOwnProperty.call(this.genericAnswers, question)) {
+            return this.genericAnswers[question];
+         }
+         return "That's a great question! Can you provide more context?";
     }
 
     public static analyzeKeywords(keywords: string[]): string {
