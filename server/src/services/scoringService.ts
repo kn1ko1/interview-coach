@@ -3,9 +3,22 @@ import { embedText } from "./embeddingsAdapter";
 type AnswerRecord = { questionId: string; userAnswer: string };
 
 function cosSim(a: number[], b: number[]) {
-  const dot = a.reduce((s, v, i) => s + v * (b[i] || 0), 0);
-  const magA = Math.sqrt(a.reduce((s, v) => s + v * v, 0));
-  const magB = Math.sqrt(b.reduce((s, v) => s + v * v, 0));
+  const len = Math.max(a.length, b.length);
+  let dot = 0;
+  let magA = 0;
+  let magB = 0;
+
+  for (let i = 0; i < len; i++) {
+    const valA = a[i] || 0;
+    const valB = b[i] || 0;
+    dot += valA * valB;
+    magA += valA * valA;
+    magB += valB * valB;
+  }
+
+  magA = Math.sqrt(magA);
+  magB = Math.sqrt(magB);
+
   if (!magA || !magB) return 0;
   return dot / (magA * magB);
 }

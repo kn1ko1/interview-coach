@@ -15,7 +15,7 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload }) => {
         }
     };
 
-    const handleUpload = async () => {
+    const handleUpload = async (): Promise<void> => {
         if (!file) {
             setUploadStatus('Please select a file to upload.');
             return;
@@ -36,16 +36,21 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload }) => {
             } else {
                 setUploadStatus('Failed to upload CV. Please try again.');
             }
-        } catch (error) {
+        } catch {
             setUploadStatus('An error occurred while uploading the CV.');
         }
+    };
+
+    // Sync wrapper to satisfy onClick's void return type
+    const onUploadClick = () => {
+        void handleUpload();
     };
 
     return (
         <div>
             <h2>Upload Your CV</h2>
             <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
+            <button onClick={onUploadClick}>Upload</button>
             {uploadStatus && <p>{uploadStatus}</p>}
         </div>
     );

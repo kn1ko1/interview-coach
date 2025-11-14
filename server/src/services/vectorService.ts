@@ -16,7 +16,7 @@ async function ensureCollection() {
     }
 }
 
-export async function upsertDocument(id: string, vector: number[], meta: Record<string, any>) {
+export async function upsertDocument(id: string, vector: number[], meta: Record<string, unknown>) {
     await ensureCollection();
     await client.upsert(COLLECTION, {
         points: [{ id, vector, payload: meta }],

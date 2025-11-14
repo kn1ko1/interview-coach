@@ -40,7 +40,7 @@ export const getEmployabilityScore = async (userId: string): Promise<number> => 
  * - returns numeric score (backend should expose /calculate-score or adjust as needed)
  */
 export const calculateScore = async (payload: {
-    responses: Record<string, any>;
+    responses: Record<string, unknown>;
     keywords?: string[];
     cvId?: string;
 }): Promise<number> => {

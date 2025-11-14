@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from '../App';
 import '../index.css';
 import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 interface CVUploaderProps {
   onUpload: (file: File) => void;
@@ -44,3 +45,59 @@ interface ResultsState {
 }
 const location = useLocation();
 const { score, responses } = (location.state as ResultsState) || { score: 0, responses: [] };
+
+// Define the shape of your user object and auth state
+interface AuthState {
+  isAuthenticated: boolean;
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  token: string | null;
+}
+
+const useAuth = () => {
+  const [authState, setAuthState] = useState<AuthState>({
+    isAuthenticated: false,
+    user: null,
+    token: null,
+  });
+
+  useEffect(() => {
+    // In a real application, you would check for a token in localStorage
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Here you would typically decode the token to get user info
+      // and verify its expiration.
+      // For this example, we'll assume the token is valid.
+      setAuthState({
+        isAuthenticated: true,
+        // This is placeholder user data
+        user: { id: '1', email: 'user@example.com' },
+        token: token,
+      });
+    }
+  }, []);
+
+  const login = (token: string, user: { id: string; email: string }) => {
+    localStorage.setItem('authToken', token);
+    setAuthState({
+      isAuthenticated: true,
+      user,
+      token,
+    });
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setAuthState({
+      isAuthenticated: false,
+      user: null,
+      token: null,
+    });
+  };
+
+  return { authState, login, logout };
+};
+
+export default useAuth;

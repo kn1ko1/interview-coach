@@ -24,12 +24,12 @@ export class UserService {
    * Replace with real DB logic, validation and password hashing.
    */
     public async createUser(userData: UserData): Promise<unknown> {
-    if (!userData || !userData.email) {
+    if (!userData.email) {
       throw new Error('Missing required user data (email).');
     }
 
     // NOTE: do NOT return the password. This is a minimal stub.
-    const { password, ...safe } = userData as any;
+    const { password, ...safe } = userData;
 
     // Simulate created user
     return {
@@ -64,7 +64,7 @@ export async function createUser(payload: Record<string, any>) {
   return UserModel.create(payload);
 }
 
-export async function comparePassword(user: any, candidatePassword: string) {
+export async function comparePassword(user: { password?: string }, candidatePassword: string) {
   if (!user || !user.password) return false;
   return bcrypt.compare(candidatePassword, user.password);
 }

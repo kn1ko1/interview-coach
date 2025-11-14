@@ -7,14 +7,14 @@ interface Response {
     answer: string;
 }
 
-interface LocationState {
+interface ResultsState {
     score: number;
     responses: Response[];
 }
 
 const Results: React.FC = () => {
-    const location = useLocation<LocationState>();
-    const { score, responses } = location.state || { score: 0, responses: [] };
+    const location = useLocation<ResultsState | undefined>();
+    const { score, responses } = location.state ?? { score: 0, responses: [] };
 
     return (
         <div className="results-container">
