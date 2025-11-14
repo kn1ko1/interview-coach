@@ -11,42 +11,35 @@ const server = createServer(app);
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(helmet());
 
-// Add CSP for local dev: allow connect to localhost
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:5000", "ws://localhost:5000"]
-    }
-  }
-}));
+// Ignore favicon requests to prevent 404 errors in logs
+app.get('/favicon.ico', (req, res) => res.status(204).send());
 
-// Initialize routes
-initRoutes(app);
+// API routes
+// app.use('/api/users', userRoutes);
+// app.use('/api/interview', interviewRoutes);
 
-// Add a root route to avoid 404 on /
+// Add a root route for development status check
 app.get('/', (req, res) => {
-  res.send('Interview Coach API is running.');
+  res.json({ status: 'ok', message: 'Interview Coach server is running.' });
 });
 
-// Serve empty response for Chrome DevTools probe
-app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
-  res.status(204).end();
-});
+// Serve frontend only in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, '../../client/build')));
 
-// Serve React static files
-app.use(express.static(path.join(__dirname, '../../client/build')));
+  // The "catchall" handler: for any request that doesn't
+  // match one above, send back React's index.html file.
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+  });
+}
 
-// For any other route, serve index.html (SPA fallback)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
-});
-
-// Start the server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

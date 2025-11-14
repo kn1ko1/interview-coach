@@ -1,13 +1,11 @@
-import React from "react";
-import "./App.css";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Interview Coach</h1>
-      <p>Welcome to your interview coaching app!</p>
-    </div>
-  );
-}
-
-export default App;
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
