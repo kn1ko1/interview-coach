@@ -2,9 +2,14 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import './Results.css';
 
+interface Response {
+    question: string;
+    answer: string;
+}
+
 interface LocationState {
     score: number;
-    responses: any[];
+    responses: Response[];
 }
 
 const Results: React.FC = () => {

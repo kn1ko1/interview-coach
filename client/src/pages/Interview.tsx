@@ -36,9 +36,9 @@ const Interview = () => {
             <h1>Interview Preparation</h1>
             <CVUploader onUpload={handleCvUpload} />
             <KeywordInput onChange={handleKeywordChange} />
-            <QuestionCard question="1" onChange={(answer: string) => handleResponseChange("1", answer)} />
-            <QuestionCard question="2" onChange={(answer: string) => handleResponseChange("2", answer)} />
-            <QuestionCard question="3" onChange={(answer: string) => handleResponseChange("3", answer)} />
+            <QuestionCard question="1" onChange={(answer: string) => { handleResponseChange("1", answer); }} />
+            <QuestionCard question="2" onChange={(answer: string) => { handleResponseChange("2", answer); }} />
+            <QuestionCard question="3" onChange={(answer: string) => { handleResponseChange("3", answer); }} />
             <button onClick={handleSubmit}>Submit</button>
             {score !== null && <ScoreBadge score={score} />}
         </div>
