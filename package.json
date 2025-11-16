@@ -4,6 +4,8 @@
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.96",
-    "@types/node": "^24.10.0"
+    "@types/node": "^24.10.0",
+    "@types/sqlite3": "^5.1.0",
+    "sqlite3": "^5.1.7"
   }
 }

@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import crypto from 'crypto';
 import authenticate from '../middleware/authMiddleware';
 import db from '../db/schema';
 
@@ -18,42 +17,42 @@ interface AuthRequest extends Request {
  * POST /api/keywords/save
  * Save keywords linked to a CV
  */
-router.post('/save', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/save', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const { cvId, keywords } = req.body;
     const userId = req.userId;
 
     if (!cvId || !keywords || !Array.isArray(keywords)) {
-      return res.status(400).json({ error: 'CV ID and keywords array required' });
+      res.status(400).json({ error: 'CV ID and keywords array required' });
+      return;
     }
 
     // Verify CV belongs to user
-    return new Promise((resolve) => {
-      db.get('SELECT id FROM cvData WHERE id = ? AND userId = ?', [cvId, userId], (err, row: any) => {
-        if (err || !row) {
-          return res.status(403).json({ error: 'CV not found or unauthorized' });
-        }
+    db.get('SELECT id FROM cvData WHERE id = ? AND userId = ?', [cvId, userId], (err: Error | null, row: any) => {
+      if (err || !row) {
+        res.status(403).json({ error: 'CV not found or unauthorized' });
+        return;
+      }
 
-        const keywordsJson = JSON.stringify(keywords);
+      const keywordsJson = JSON.stringify(keywords);
 
-        db.run(
-          'UPDATE cvData SET keywords = ?, updatedAt = datetime("now") WHERE id = ? AND userId = ?',
-          [keywordsJson, cvId, userId],
-          (err) => {
-            if (err) {
-              console.error('Keywords save error:', err);
-              return res.status(500).json({ error: 'Failed to save keywords' });
-            }
-
-            res.status(200).json({
-              message: 'Keywords saved successfully',
-              cvId,
-              keywords,
-            });
-            resolve(null);
+      db.run(
+        'UPDATE cvData SET keywords = ?, updatedAt = datetime("now") WHERE id = ? AND userId = ?',
+        [keywordsJson, cvId, userId],
+        (err: Error | null) => {
+          if (err) {
+            console.error('Keywords save error:', err);
+            res.status(500).json({ error: 'Failed to save keywords' });
+            return;
           }
-        );
-      });
+
+          res.status(200).json({
+            message: 'Keywords saved successfully',
+            cvId,
+            keywords,
+          });
+        }
+      );
     });
   } catch (err) {
     console.error('Keywords save error:', err);
@@ -65,25 +64,24 @@ router.post('/save', authenticate, async (req: AuthRequest, res: Response) => {
  * GET /api/keywords/:cvId
  * Get keywords for a specific CV
  */
-router.get('/:cvId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/:cvId', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const { cvId } = req.params;
     const userId = req.userId;
 
-    return new Promise((resolve) => {
-      db.get('SELECT keywords FROM cvData WHERE id = ? AND userId = ?', [cvId, userId], (err, row: any) => {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to retrieve keywords' });
-        }
+    db.get('SELECT keywords FROM cvData WHERE id = ? AND userId = ?', [cvId, userId], (err: Error | null, row: any) => {
+      if (err) {
+        res.status(500).json({ error: 'Failed to retrieve keywords' });
+        return;
+      }
 
-        if (!row) {
-          return res.status(404).json({ error: 'CV not found' });
-        }
+      if (!row) {
+        res.status(404).json({ error: 'CV not found' });
+        return;
+      }
 
-        const keywords = row.keywords ? JSON.parse(row.keywords) : [];
-        res.status(200).json({ keywords });
-        resolve(null);
-      });
+      const keywords = row.keywords ? JSON.parse(row.keywords) : [];
+      res.status(200).json({ keywords });
     });
   } catch (err) {
     console.error('Keywords retrieve error:', err);

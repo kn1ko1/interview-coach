@@ -21,37 +21,36 @@ interface AuthRequest extends Request {
  * POST /api/stories/create
  * Create a new story (STAR/CAR format)
  */
-router.post('/create', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/create', authenticate, (req: AuthRequest, res: Response): void => {
   try {
-    const { cvId, title, content, format, competency } = req.body;
+    const { title, content, format, competency } = req.body;
     const userId = req.userId;
 
     if (!title || !content || !format) {
-      return res.status(400).json({ error: 'Title, content, and format required' });
+      res.status(400).json({ error: 'Title, content, and format required' });
+      return;
     }
 
     const storyId = crypto.randomBytes(8).toString('hex');
 
-    return new Promise((resolve) => {
-      db.run(
-        'INSERT INTO stories (id, userId, title, content, format, competency, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, datetime("now"), datetime("now"))',
-        [storyId, userId, title, content, format, competency || ''],
-        (err) => {
-          if (err) {
-            console.error('Story creation error:', err);
-            return res.status(500).json({ error: 'Failed to create story' });
-          }
-
-          res.status(200).json({
-            message: 'Story created successfully',
-            storyId,
-            title,
-            format,
-          });
-          resolve(null);
+    db.run(
+      'INSERT INTO stories (id, userId, title, content, format, competency, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, datetime("now"), datetime("now"))',
+      [storyId, userId, title, content, format, competency || ''],
+      (err: Error | null) => {
+        if (err) {
+          console.error('Story creation error:', err);
+          res.status(500).json({ error: 'Failed to create story' });
+          return;
         }
-      );
-    });
+
+        res.status(200).json({
+          message: 'Story created successfully',
+          storyId,
+          title,
+          format,
+        });
+      }
+    );
   } catch (err) {
     console.error('Story creation error:', err);
     res.status(500).json({ error: 'Failed to create story' });
@@ -62,24 +61,22 @@ router.post('/create', authenticate, async (req: AuthRequest, res: Response) => 
  * GET /api/stories
  * Get all stories for logged-in user
  */
-router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const userId = req.userId;
 
-    return new Promise((resolve) => {
-      db.all(
-        'SELECT id, title, format, competency, createdAt FROM stories WHERE userId = ? ORDER BY createdAt DESC',
-        [userId],
-        (err, rows: any[]) => {
-          if (err) {
-            return res.status(500).json({ error: 'Failed to retrieve stories' });
-          }
-
-          res.status(200).json({ stories: rows || [] });
-          resolve(null);
+    db.all(
+      'SELECT id, title, format, competency, createdAt FROM stories WHERE userId = ? ORDER BY createdAt DESC',
+      [userId],
+      (err: Error | null, rows: any[]) => {
+        if (err) {
+          res.status(500).json({ error: 'Failed to retrieve stories' });
+          return;
         }
-      );
-    });
+
+        res.status(200).json({ stories: rows || [] });
+      }
+    );
   } catch (err) {
     console.error('Stories retrieve error:', err);
     res.status(500).json({ error: 'Failed to retrieve stories' });
@@ -90,24 +87,23 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
  * GET /api/stories/:storyId
  * Get a specific story
  */
-router.get('/:storyId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/:storyId', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const { storyId } = req.params;
     const userId = req.userId;
 
-    return new Promise((resolve) => {
-      db.get('SELECT * FROM stories WHERE id = ? AND userId = ?', [storyId, userId], (err, row: any) => {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to retrieve story' });
-        }
+    db.get('SELECT * FROM stories WHERE id = ? AND userId = ?', [storyId, userId], (err: Error | null, row: any) => {
+      if (err) {
+        res.status(500).json({ error: 'Failed to retrieve story' });
+        return;
+      }
 
-        if (!row) {
-          return res.status(404).json({ error: 'Story not found' });
-        }
+      if (!row) {
+        res.status(404).json({ error: 'Story not found' });
+        return;
+      }
 
-        res.status(200).json(row);
-        resolve(null);
-      });
+      res.status(200).json(row);
     });
   } catch (err) {
     console.error('Story retrieve error:', err);
@@ -119,26 +115,24 @@ router.get('/:storyId', authenticate, async (req: AuthRequest, res: Response) =>
  * PUT /api/stories/:storyId
  * Update a story
  */
-router.put('/:storyId', authenticate, async (req: AuthRequest, res: Response) => {
+router.put('/:storyId', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const { storyId } = req.params;
     const { title, content, format, competency } = req.body;
     const userId = req.userId;
 
-    return new Promise((resolve) => {
-      db.run(
-        'UPDATE stories SET title = ?, content = ?, format = ?, competency = ?, updatedAt = datetime("now") WHERE id = ? AND userId = ?',
-        [title, content, format, competency, storyId, userId],
-        (err) => {
-          if (err) {
-            return res.status(500).json({ error: 'Failed to update story' });
-          }
-
-          res.status(200).json({ message: 'Story updated successfully' });
-          resolve(null);
+    db.run(
+      'UPDATE stories SET title = ?, content = ?, format = ?, competency = ?, updatedAt = datetime("now") WHERE id = ? AND userId = ?',
+      [title, content, format, competency, storyId, userId],
+      (err: Error | null) => {
+        if (err) {
+          res.status(500).json({ error: 'Failed to update story' });
+          return;
         }
-      );
-    });
+
+        res.status(200).json({ message: 'Story updated successfully' });
+      }
+    );
   } catch (err) {
     console.error('Story update error:', err);
     res.status(500).json({ error: 'Failed to update story' });
@@ -149,20 +143,18 @@ router.put('/:storyId', authenticate, async (req: AuthRequest, res: Response) =>
  * DELETE /api/stories/:storyId
  * Delete a story
  */
-router.delete('/:storyId', authenticate, async (req: AuthRequest, res: Response) => {
+router.delete('/:storyId', authenticate, (req: AuthRequest, res: Response): void => {
   try {
     const { storyId } = req.params;
     const userId = req.userId;
 
-    return new Promise((resolve) => {
-      db.run('DELETE FROM stories WHERE id = ? AND userId = ?', [storyId, userId], (err) => {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to delete story' });
-        }
+    db.run('DELETE FROM stories WHERE id = ? AND userId = ?', [storyId, userId], (err: Error | null) => {
+      if (err) {
+        res.status(500).json({ error: 'Failed to delete story' });
+        return;
+      }
 
-        res.status(200).json({ message: 'Story deleted successfully' });
-        resolve(null);
-      });
+      res.status(200).json({ message: 'Story deleted successfully' });
     });
   } catch (err) {
     console.error('Story delete error:', err);

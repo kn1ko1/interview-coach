@@ -43,7 +43,7 @@ initializeDatabase()
       console.log(`🧪 For testing, visit: http://localhost:${PORT}/api/auth/latest-email`);
     });
   })
-  .catch((err) => {
+  .catch((err: Error) => {
     console.error('❌ Failed to initialize database:', err);
     process.exit(1);
   });
