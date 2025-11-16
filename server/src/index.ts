@@ -1,45 +1,51 @@
 import express from 'express';
-import { createServer } from 'http';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import initRoutes from './routes'; // adjust path if different
-import path from 'path';
+import { initializeDatabase } from './db/schema';
+import authRoutes from './routes/authRoutes';
+import cvRoutes from './routes/cvRoutes';
+import keywordsRoutes from './routes/keywordsRoutes';
+import storiesRoutes from './routes/storiesRoutes';
+import interviewRoutes from './routes/interviewRoutes';
 
 const app = express();
-const server = createServer(app);
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
 
-// Ignore favicon requests to prevent 404 errors in logs
+// Ignore favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).send());
 
-// API routes
-// app.use('/api/users', userRoutes);
-// app.use('/api/interview', interviewRoutes);
-
-// Add a root route for development status check
+// Root route
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Interview Coach server is running.' });
 });
 
-// Serve frontend only in production
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the React app
-  app.use(express.static(path.join(__dirname, '../../client/build')));
+// Auth routes (public)
+app.use('/api/auth', authRoutes);
 
-  // The "catchall" handler: for any request that doesn't
-  // match one above, send back React's index.html file.
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+// Protected routes (require authentication)
+app.use('/api/cv', cvRoutes);
+app.use('/api/keywords', keywordsRoutes);
+app.use('/api/stories', storiesRoutes);
+app.use('/api/interview', interviewRoutes);
+
+// Initialize database and start server
+initializeDatabase()
+  .then(() => {
+    console.log('✅ Database initialized successfully');
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`📧 Email logs saved to server/email_logs.json`);
+      console.log(`🧪 For testing, visit: http://localhost:${PORT}/api/auth/latest-email`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to initialize database:', err);
+    process.exit(1);
   });
-}
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+export default app;

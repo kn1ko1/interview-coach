@@ -1,63 +1,80 @@
+/* Kindle-Style CSS */
+
+/* --- Container & Background --- */
+
 .home-container {
+  /* White/Off-White paper-like background */
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #fdf6e3; /* A very light, warm sepia tone for a comfortable reading experience */
   padding: 40px 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  /* Use a classic, readable serif font (mimicking Bookerly/Caecilia) */
+  font-family: 'Georgia', 'Times New Roman', Times, serif; 
 }
 
 .home-content {
-  max-width: 900px;
+  /* Narrower width for better line length, like an e-reader page */
+  max-width: 600px; 
   margin: 0 auto;
 }
 
+/* --- Header & Title --- */
+
 .home-header {
   text-align: center;
-  color: white;
-  margin-bottom: 60px;
-  animation: fadeInDown 0.8s ease-out;
+  color: #1a1a1a; /* Dark text */
+  margin-bottom: 40px; /* Reduced margin */
+  /* Remove animations for a static, 'printed' look */
 }
 
 .home-header h1 {
-  font-size: 3em;
-  font-weight: 800;
-  margin: 0 0 15px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 2.2em; /* Slightly smaller for a more traditional heading */
+  font-weight: bold; /* Standard bold */
+  margin: 0 0 10px 0;
+  text-shadow: none; /* Remove text shadow */
 }
 
 .home-header p {
-  font-size: 1.2em;
-  opacity: 0.95;
+  font-size: 1.1em;
+  opacity: 1; /* Full opacity */
   margin: 0;
 }
 
+/* --- Sections & Content Boxes --- */
+
 .home-sections {
   display: grid;
-  gap: 30px;
+  gap: 20px; /* Reduced gap */
   margin-bottom: 40px;
 }
 
 .section {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: fadeInUp 0.8s ease-out;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff; /* Pure white content area */
+  border-radius: 0; /* Remove rounded corners for a flat, page-like appearance */
+  padding: 25px;
+  box-shadow: none; /* Remove shadows */
+  border: 1px solid #e0e0e0; /* Subtle border to define the 'page' */
+  /* Remove animations and hover effects */
+  transition: none; 
+  animation: none;
 }
 
 .section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  transform: none; /* Remove lift effect */
+  box-shadow: none;
 }
 
 .section h2 {
-  color: #2d3748;
-  font-size: 1.5em;
+  color: #1a1a1a; /* Dark text */
+  font-size: 1.4em;
   margin-top: 0;
-  margin-bottom: 20px;
-  border-bottom: 3px solid #667eea;
-  padding-bottom: 10px;
+  margin-bottom: 15px;
+  /* Use a simple, minimal underline instead of a thick colored border */
+  border-bottom: 1px solid #333; 
+  padding-bottom: 5px;
+  font-weight: bold;
 }
+
+/* --- Specific Sections --- */
 
 .cv-uploader-section,
 .keywords-section {
@@ -66,91 +83,77 @@
 
 .action-section {
   text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Use a minimal dark background instead of a vibrant gradient */
+  background: #333; 
   color: white;
   grid-column: 1 / -1;
+  padding: 20px; /* Add padding to the action section for definition */
+  border-radius: 0; /* Flat corners */
 }
 
 .action-section h2 {
-  border-bottom-color: rgba(255, 255, 255, 0.3);
+  border-bottom-color: #fdf6e3; /* Light border in dark section */
 }
 
+/* --- Button Styling --- */
+
 .score-button {
-  background-color: #48bb78;
+  /* Use high-contrast, non-vibrant button colors */
+  background-color: #0077cc; /* A classic blue for action */
   color: white;
   border: none;
-  padding: 15px 40px;
-  font-size: 1.1em;
+  padding: 12px 30px;
+  font-size: 1em;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 4px; /* Slightly rounded, but minimal */
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+  transition: background-color 0.2s ease;
+  box-shadow: none; /* Remove shadows */
 }
 
 .score-button:hover {
-  background-color: #38a169;
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+  background-color: #005fa3; /* Darker blue on hover */
+  transform: none; /* Remove scale effect */
+  box-shadow: none;
 }
 
 .score-button:disabled {
-  background-color: #cbd5e0;
+  background-color: #cccccc;
   cursor: not-allowed;
-  transform: scale(1);
+  transform: none;
   box-shadow: none;
 }
 
 .score-badge-container {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
-  animation: fadeIn 0.5s ease-in;
+  margin-top: 30px;
+  /* Remove animation */
+  animation: none;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* --- Animations (Removed) --- */
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Remove all keyframe definitions as they break the static, 'printed' feel */
+/* @keyframes fadeInDown { ... }
+@keyframes fadeInUp { ... }
+@keyframes fadeIn { ... } 
+*/
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
-/* Responsive Design */
+/* --- Responsive Design (Updated for Kindle Aesthetic) --- */
+
 @media (max-width: 768px) {
   .home-container {
     padding: 20px 15px;
   }
 
   .home-header h1 {
-    font-size: 2em;
+    font-size: 1.8em;
   }
 
-  .home-header p {
-    font-size: 1em;
+  .home-content {
+    max-width: 100%; /* Allows full width on small screens */
   }
 
   .section {
@@ -162,19 +165,19 @@
   }
 
   .score-button {
-    padding: 12px 30px;
+    padding: 10px 25px;
     font-size: 1em;
   }
 }
 
 @media (max-width: 480px) {
   .home-header h1 {
-    font-size: 1.5em;
+    font-size: 1.4em;
   }
 
   .section {
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .score-button {
