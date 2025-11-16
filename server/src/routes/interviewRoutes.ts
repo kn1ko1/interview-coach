@@ -16,6 +16,16 @@ interface AuthRequest extends Request {
   };
 }
 
+interface InterviewSession {
+  id: string;
+  userId: string;
+  questions: string;
+  answers: string;
+  score: number | null;
+  feedback: string | null;
+  createdAt: string;
+}
+
 /**
  * POST /api/interview/start
  * Start a new interview session
@@ -133,7 +143,7 @@ router.get('/:sessionId', authenticate, (req: AuthRequest, res: Response): void 
     const { sessionId } = req.params;
     const userId = req.userId;
 
-    db.get('SELECT * FROM interviewSessions WHERE id = ? AND userId = ?', [sessionId, userId], (err: Error | null, row: any) => {
+    db.get('SELECT * FROM interviewSessions WHERE id = ? AND userId = ?', [sessionId, userId], (err: Error | null, row: InterviewSession | undefined) => {
       if (err) {
         res.status(500).json({ error: 'Failed to retrieve session' });
         return;
