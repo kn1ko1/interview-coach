@@ -1,59 +1,93 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/authContext';
 
 interface CVUploaderProps {
   onUpload: (file: File) => void;
 }
 
 const CVUploader: React.FC<CVUploaderProps> = ({ onUpload }) => {
-    const [file, setFile] = useState<File | null>(null);
-    const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const { token } = useAuth();
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files?.[0];
-        if (selectedFile) {
-            setFile(selectedFile);
-        }
-    };
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError('');
+      setSuccess('');
+    }
+  };
 
-    const handleUpload = async (): Promise<void> => {
-        if (!file) {
-            setUploadStatus('Please select a file to upload.');
-            return;
-        }
+  const handleUpload = async (): Promise<void> => {
+    if (!file || !token) {
+      setError('Please select a file and ensure you are logged in');
+      return;
+    }
 
-        const formData = new FormData();
-        formData.append('cv', file);
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
-        try {
-            const response = await fetch('/api/upload-cv', {
-                method: 'POST',
-                body: formData,
-            });
+    try {
+      const text = await file.text();
 
-            if (response.ok) {
-                setUploadStatus('CV uploaded successfully!');
-                onUpload(file);
-            } else {
-                setUploadStatus('Failed to upload CV. Please try again.');
-            }
-        } catch {
-            setUploadStatus('An error occurred while uploading the CV.');
-        }
-    };
+      const response = await fetch('http://localhost:5000/api/cv/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cvText: text }),
+      });
 
-    // Sync wrapper to satisfy onClick's void return type
-    const onUploadClick = () => {
-        void handleUpload();
-    };
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
 
-    return (
-        <div>
-            <h2>Upload Your CV</h2>
-            <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
-            <button onClick={onUploadClick}>Upload</button>
-            {uploadStatus && <p>{uploadStatus}</p>}
-        </div>
-    );
+      const data = await response.json();
+      onUpload(file);
+      setSuccess(`CV uploaded successfully! ID: ${data.cvId}`);
+      setFile(null);
+    } catch (err) {
+      setError(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="cv-uploader">
+      <h2>Upload Your CV</h2>
+      
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
+
+      <div className="file-input-wrapper">
+        <input
+          type="file"
+          accept=".pdf,.txt,.doc,.docx"
+          onChange={handleFileSelect}
+          disabled={loading}
+          id="cv-file-input"
+        />
+        <label htmlFor="cv-file-input" className="file-label">
+          {file ? file.name : 'Choose a file...'}
+        </label>
+      </div>
+
+      <button
+        onClick={handleUpload}
+        disabled={!file || loading}
+        className="upload-button"
+      >
+        {loading ? 'Uploading...' : 'Upload CV'}
+      </button>
+    </div>
+  );
 };
 
 export default CVUploader;

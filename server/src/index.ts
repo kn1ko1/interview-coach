@@ -1,11 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import { initializeDatabase } from './db/schema';
 import authRoutes from './routes/authRoutes';
 import cvRoutes from './routes/cvRoutes';
-import keywordsRoutes from './routes/keywordsRoutes';
-import storiesRoutes from './routes/storiesRoutes';
 import interviewRoutes from './routes/interviewRoutes';
 
 const app = express();
@@ -13,39 +10,32 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(helmet());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Ignore favicon requests
-app.get('/favicon.ico', (req, res) => res.status(204).send());
-
-// Root route
-app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Interview Coach server is running.' });
-});
-
-// Auth routes (public)
+// Routes
 app.use('/api/auth', authRoutes);
-
-// Protected routes (require authentication)
 app.use('/api/cv', cvRoutes);
-app.use('/api/keywords', keywordsRoutes);
-app.use('/api/stories', storiesRoutes);
 app.use('/api/interview', interviewRoutes);
 
+// Health check
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
 // Initialize database and start server
-initializeDatabase()
-  .then(() => {
+const start = async () => {
+  try {
+    await initializeDatabase();
     console.log('✅ Database initialized successfully');
+    
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(`📧 Email logs saved to server/email_logs.json`);
-      console.log(`🧪 For testing, visit: http://localhost:${PORT}/api/auth/latest-email`);
     });
-  })
-  .catch((err: Error) => {
-    console.error('❌ Failed to initialize database:', err);
+  } catch (err) {
+    console.error('❌ Failed to start server:', err);
     process.exit(1);
-  });
+  }
+};
 
-export default app;
+start();
