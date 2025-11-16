@@ -1,53 +1,161 @@
 import express, { Request, Response } from 'express';
-import AuthService from '../services/authService';
+import jwt from 'jsonwebtoken';
+import { UserService } from '../services/userService';
+import { AuthService } from '../services/authService';
+import { EmailService } from '../services/emailService';
 
 const router = express.Router();
 
 interface AuthRequest extends Request {
   body: {
     email: string;
+    token?: string;
   };
 }
 
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_EXPIRY = '7d';
+
 /**
  * POST /api/auth/login
- * Login or create user with email
+ * Send login email with token
  */
-router.post('/login', (req: AuthRequest, res: Response) => {
-  const { email } = req.body;
+router.post('/login', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
+    if (!email) {
+      res.status(400).json({ error: 'Email is required' });
+      return;
+    }
+
+    if (!AuthService.validateEmail(email)) {
+      res.status(400).json({ error: 'Invalid email format' });
+      return;
+    }
+
+    // Create or get user
+    const user = await UserService.createOrGetUser(email);
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRY }
+    );
+
+    // Simulate email send (logs to file)
+    await EmailService.sendLoginEmail(email, token);
+
+    res.status(200).json({
+      message: 'Login email sent',
+      user,
+      // For testing: include token in response (remove in production)
+      testToken: process.env.NODE_ENV === 'development' ? token : undefined,
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Login failed' });
   }
-
-  const result = AuthService.loginOrCreateUser(email);
-
-  if ('error' in result) {
-    return res.status(400).json(result);
-  }
-
-  res.status(200).json(result);
 });
 
 /**
  * POST /api/auth/verify
  * Verify JWT token
  */
-router.post('/verify', (req: Request, res: Response) => {
-  const authHeader = req.headers.authorization;
+router.post('/verify', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { token } = req.body;
+    const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing or invalid authorization header' });
+    const tokenToVerify = token || (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null);
+
+    if (!tokenToVerify) {
+      res.status(401).json({ error: 'Token is required' });
+      return;
+    }
+
+    // Verify JWT
+    const decoded = jwt.verify(tokenToVerify, JWT_SECRET) as { userId: string; email: string };
+
+    // Get user
+    const user = await UserService.getUserById(decoded.userId);
+
+    if (!user) {
+      res.status(401).json({ error: 'User not found' });
+      return;
+    }
+
+    res.status(200).json({
+      valid: true,
+      user,
+      token: tokenToVerify,
+    });
+  } catch (err: Error | any) {
+    console.error('Verify error:', err);
+    if (err.name === 'TokenExpiredError') {
+      res.status(401).json({ error: 'Token expired' });
+      return;
+    }
+    if (err.name === 'JsonWebTokenError') {
+      res.status(401).json({ error: 'Invalid token' });
+      return;
+    }
+    res.status(500).json({ error: 'Verification failed' });
+  }
+});
+
+/**
+ * POST /api/auth/logout
+ * Logout (JWT is stateless, but we can invalidate on client)
+ */
+router.post('/logout', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ error: 'Logout failed' });
+  }
+});
+
+/**
+ * GET /api/auth/emails (for testing only - remove in production)
+ * Get all email logs
+ */
+router.get('/emails', async (req: Request, res: Response): Promise<void> => {
+  if (process.env.NODE_ENV !== 'development') {
+    res.status(403).json({ error: 'Not available in production' });
+    return;
   }
 
-  const token = authHeader.slice(7);
-  const decoded = AuthService.verifyToken(token);
+  try {
+    const emails = await EmailService.getEmailLogs();
+    res.status(200).json(emails);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to get email logs' });
+  }
+});
 
-  if (!decoded) {
-    return res.status(401).json({ error: 'Invalid or expired token' });
+/**
+ * GET /api/auth/latest-email (for testing only - remove in production)
+ * Get latest email with token
+ */
+router.get('/latest-email', async (req: Request, res: Response): Promise<void> => {
+  if (process.env.NODE_ENV !== 'development') {
+    res.status(403).json({ error: 'Not available in production' });
+    return;
   }
 
-  res.status(200).json({ valid: true, user: decoded });
+  try {
+    const email = await EmailService.getLatestEmail();
+    if (!email) {
+      res.status(404).json({ error: 'No emails found' });
+      return;
+    }
+    res.status(200).json(email);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to get email' });
+  }
 });
 
 export default router;

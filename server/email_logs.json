@@ -1,0 +1,9 @@
+[
+  {
+    "to": "test@example.com",
+    "subject": "Interview Coach - Login Link",
+    "body": "\n      Click the link below to login to your Interview Coach account:\n      \n      Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MGFiNmNhMzZmYjg5YmNkIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzYzMzE4NjEzLCJleHAiOjE3NjM5MjM0MTN9.J-dK5hsAXuq0butnSbj5jCyvQNRkIavY2OBMff7EvMU\n      \n      This link expires in 7 days.\n    ",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MGFiNmNhMzZmYjg5YmNkIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzYzMzE4NjEzLCJleHAiOjE3NjM5MjM0MTN9.J-dK5hsAXuq0butnSbj5jCyvQNRkIavY2OBMff7EvMU",
+    "timestamp": "2025-11-16T18:43:33.497Z"
+  }
+]

@@ -1,28 +1,46 @@
 import { Request, Response, NextFunction } from 'express';
-import AuthService from '../services/authService';
+import jwt from 'jsonwebtoken';
 
-interface AuthenticatedRequest extends Request {
+interface AuthRequest extends Request {
   userId?: string;
   email?: string;
 }
 
-export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing or invalid authorization header' });
+const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const token = authHeader.slice(7);
+
+    // Verify JWT
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+
+    req.userId = decoded.userId;
+    req.email = decoded.email;
+
+    next();
+  } catch (err: Error | any) {
+    console.error('Auth middleware error:', err.message);
+    
+    if (err.name === 'TokenExpiredError') {
+      res.status(401).json({ error: 'Token expired' });
+      return;
+    }
+    
+    if (err.name === 'JsonWebTokenError') {
+      res.status(401).json({ error: 'Invalid token' });
+      return;
+    }
+
+    res.status(401).json({ error: 'Unauthorized' });
   }
-
-  const token = authHeader.slice(7);
-  const decoded = AuthService.verifyToken(token);
-
-  if (!decoded) {
-    return res.status(401).json({ error: 'Invalid or expired token' });
-  }
-
-  req.userId = decoded.userId;
-  req.email = decoded.email;
-  next();
 };
 
 export default authenticate;

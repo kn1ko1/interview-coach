@@ -1,68 +1,6 @@
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-
-interface User {
-  id: string;
-  email: string;
-  createdAt: Date;
-}
-
-interface AuthToken {
-  token: string;
-  expiresIn: string;
-  user: User;
-}
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 export class AuthService {
-  private static jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-me';
-  private static tokenExpiry = '7d';
-
-  /**
-   * Generate a unique user ID based on email
-   */
-  static generateUserId(email: string): string {
-    return crypto.createHash('sha256').update(email.toLowerCase()).digest('hex').slice(0, 16);
-  }
-
-  /**
-   * Generate JWT token for user
-   */
-  static generateToken(email: string): AuthToken {
-    const userId = this.generateUserId(email);
-    const user: User = {
-      id: userId,
-      email: email.toLowerCase(),
-      createdAt: new Date(),
-    };
-
-    const token = jwt.sign(
-      { userId, email: user.email },
-      this.jwtSecret,
-      { expiresIn: this.tokenExpiry }
-    );
-
-    return {
-      token,
-      expiresIn: this.tokenExpiry,
-      user,
-    };
-  }
-
-  /**
-   * Verify JWT token
-   */
-  static verifyToken(token: string): { userId: string; email: string } | null {
-    try {
-      const decoded = jwt.verify(token, this.jwtSecret) as {
-        userId: string;
-        email: string;
-      };
-      return decoded;
-    } catch {
-      return null;
-    }
-  }
-
   /**
    * Validate email format
    */
@@ -72,15 +10,27 @@ export class AuthService {
   }
 
   /**
-   * Login or create user with email
+   * Generate JWT token
    */
-  static loginOrCreateUser(email: string): AuthToken | { error: string } {
-    if (!this.validateEmail(email)) {
-      return { error: 'Invalid email format' };
-    }
+  static generateToken(payload: { userId: string; email: string }, secret: string, expiresIn: string | number = '7d'): string {
+    const options: SignOptions = {
+      expiresIn: expiresIn as any,
+      algorithm: 'HS256',
+    };
 
-    return this.generateToken(email);
+    return jwt.sign(payload, secret, options);
+  }
+
+  /**
+   * Verify JWT token
+   */
+  static verifyToken(token: string, secret: string): { userId: string; email: string } | null {
+    try {
+      const decoded = jwt.verify(token, secret) as { userId: string; email: string };
+      return decoded;
+    } catch (err) {
+      console.error('Token verification failed:', err);
+      return null;
+    }
   }
 }
-
-export default AuthService;
