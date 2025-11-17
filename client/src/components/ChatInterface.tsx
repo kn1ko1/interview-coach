@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/ChatInterface.css';
+import { PersonalityMode } from './PersonalitySelector';
 
 interface Message {
   id: string;
@@ -14,6 +15,7 @@ interface ChatInterfaceProps {
   isLoading?: boolean;
   cv?: string;
   jobSpec?: string;
+  personality?: PersonalityMode;
 }
 
 const SAMPLE_QUESTIONS = [
@@ -24,7 +26,7 @@ const SAMPLE_QUESTIONS = [
   "What are your strengths and how do they align with this position?",
 ];
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = false, cv = '', jobSpec = '' }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = false, cv = '', jobSpec = '', personality = 'supportive' }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -103,6 +105,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = fal
     } else if (currentQuestion === SAMPLE_QUESTIONS.length - 1) {
       setTimeout(() => {
         const score = calculateEmployabilityScore();
+        
+        let feedback = '';
+        if (personality === 'ruthless') {
+          // Ruthless coach feedback
+          if (score >= 80) {
+            feedback = "✅ Outstanding performance. You're well-prepared for this role.";
+          } else if (score >= 60) {
+            feedback = "⚠️ Decent effort, but you need to dig deeper. More specific examples required.";
+          } else {
+            feedback = "❌ Weak responses. Your preparation is insufficient for this role. Study harder.";
+          }
+        } else {
+          // Supportive coach feedback
+          if (score >= 80) {
+            feedback = "✅ Excellent fit for this role! Great preparation!";
+          } else if (score >= 60) {
+            feedback = "✓ Good potential match! Keep practicing and building confidence.";
+          } else {
+            feedback = "○ Continue preparing and retake the test when ready. You're on the right track!";
+          }
+        }
+
         const scoreSummary = `Interview Complete! 🎉
 
 Your Employability Score: ${score}/100
@@ -112,7 +136,7 @@ Summary:
 • Response Quality: ${answers.reduce((sum, ans) => sum + ans.length, 0) / Math.max(answers.length, 1) > 200 ? 'Excellent' : 'Good'}
 • Job Alignment: ${jobSpec ? 'Analyzed' : 'No job spec provided'}
 
-${score >= 80 ? '✅ Excellent fit for this role!' : score >= 60 ? '✓ Good potential match' : '○ Continue preparing and retake the test'}`;
+${feedback}`;
         const scoreMessage: Message = {
           id: `msg-${Date.now()}-ai`,
           type: 'ai',

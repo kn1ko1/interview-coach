@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import CVUploader from '../components/CVUploader';
 import ChatInterface from '../components/ChatInterface';
 import JobSpecUploader from '../components/JobSpecUploader';
+import PersonalitySelector, { PersonalityMode } from '../components/PersonalitySelector';
 import './Home.css';
 
 const Home: React.FC = () => {
     const [cv, setCv] = useState<File | null>(null);
     const [jobSpec, setJobSpec] = useState<string>('');
+    const [personality, setPersonality] = useState<PersonalityMode>('supportive');
 
     const handleKeywordChange = (newKeywords: string[]) => {
         // Removed - keywords section is hidden
@@ -29,6 +31,13 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="home-sections">
+                    <div className="personality-section">
+                        <PersonalitySelector 
+                            selectedPersonality={personality}
+                            onPersonalityChange={setPersonality}
+                        />
+                    </div>
+
                     <div className="uploader-container">
                         <div className="section cv-uploader-section">
                             <CVUploader onUpload={handleCvUpload} />
@@ -41,7 +50,11 @@ const Home: React.FC = () => {
 
                     <div className="section chat-section">
                         <h2>Interview Chat</h2>
-                        <ChatInterface cv={cv?.name || ''} jobSpec={jobSpec} />
+                        <ChatInterface 
+                            cv={cv?.name || ''} 
+                            jobSpec={jobSpec}
+                            personality={personality}
+                        />
                     </div>
                 </div>
             </div>
