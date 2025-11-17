@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/ChatInterface.css';
 import { PersonalityMode } from './PersonalitySelector';
+import { scoreAnswer, analyzeCV } from '../services/scoringService';
 
 interface Message {
   id: string;
@@ -19,11 +20,46 @@ interface ChatInterfaceProps {
 }
 
 const SAMPLE_QUESTIONS = [
-  "Tell me about your experience with the required technologies mentioned in this job description.",
-  "How do you approach problem-solving and collaboration in a team environment?",
-  "Describe a challenging project you worked on and how you overcame obstacles.",
-  "Why are you interested in this particular role and company?",
-  "What are your strengths and how do they align with this position?",
+  {
+    question: "Tell me about your experience with the required technologies mentioned in this job description.",
+    category: "Technical Experience"
+  },
+  {
+    question: "How do you approach problem-solving and collaboration in a team environment?",
+    category: "Soft Skills"
+  },
+  {
+    question: "Describe a challenging project you worked on and how you overcame obstacles.",
+    category: "Problem Solving"
+  },
+  {
+    question: "Why are you interested in this particular role and company?",
+    category: "Motivation"
+  },
+  {
+    question: "What are your strengths and how do they align with this position?",
+    category: "Self-Assessment"
+  },
+  {
+    question: "Describe your experience with agile/scrum methodologies and how you handle changing requirements.",
+    category: "Methodology"
+  },
+  {
+    question: "Tell me about a time you mentored or helped a junior team member grow.",
+    category: "Leadership"
+  },
+  {
+    question: "How do you stay current with new technologies and industry trends?",
+    category: "Continuous Learning"
+  },
+  {
+    question: "Describe a situation where you had to deal with conflicting priorities. How did you handle it?",
+    category: "Conflict Resolution"
+  },
+  {
+    question: "What's your experience with code review processes and giving/receiving feedback?",
+    category: "Code Quality"
+  },
 ];
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = false, cv = '', jobSpec = '', personality = 'supportive' }) => {
@@ -33,18 +69,45 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = fal
   const [answers, setAnswers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with first sample question
+  // Initialize with CV strength analysis + first sample question
   useEffect(() => {
-    if (messages.length === 0) {
+    if (messages.length === 0 && cv) {
+      const cvAnalysis = analyzeCV(cv, jobSpec, personality);
+      
+      const cvMessage: Message = {
+        id: `msg-${Date.now()}-cv`,
+        type: 'ai',
+        content: `📋 **CV Analysis**
+        
+Strength: ${cvAnalysis.overallStrength}/10
+Job Alignment: ${cvAnalysis.alignment}%
+
+${cvAnalysis.feedback}
+
+---
+
+Now let's get started with the interview!`,
+        timestamp: new Date(),
+      };
+      
+      const initialMessage: Message = {
+        id: `msg-${Date.now()}-ai-q1`,
+        type: 'ai',
+        content: SAMPLE_QUESTIONS[0].question,
+        timestamp: new Date(),
+      };
+      
+      setMessages([cvMessage, initialMessage]);
+    } else if (messages.length === 0) {
       const initialMessage: Message = {
         id: `msg-${Date.now()}-ai`,
         type: 'ai',
-        content: SAMPLE_QUESTIONS[0],
+        content: SAMPLE_QUESTIONS[0].question,
         timestamp: new Date(),
       };
       setMessages([initialMessage]);
     }
-  }, []);
+  }, [cv, jobSpec, personality]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -84,6 +147,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = fal
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    
+    // Score the current answer
+    const currentQ = SAMPLE_QUESTIONS[currentQuestion];
+    const answerScoringResult = scoreAnswer(
+      currentQ.question,
+      inputValue,
+      jobSpec,
+      personality
+    );
+    
     setAnswers((prev) => [...prev, inputValue]);
     setInputValue('');
 
@@ -91,63 +164,104 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = fal
       onSubmit(inputValue);
     }
 
-    if (currentQuestion < SAMPLE_QUESTIONS.length - 1) {
-      setTimeout(() => {
-        const nextMessage: Message = {
-          id: `msg-${Date.now()}-ai`,
-          type: 'ai',
-          content: SAMPLE_QUESTIONS[currentQuestion + 1],
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, nextMessage]);
-        setCurrentQuestion((prev) => prev + 1);
-      }, 500);
-    } else if (currentQuestion === SAMPLE_QUESTIONS.length - 1) {
-      setTimeout(() => {
-        const score = calculateEmployabilityScore();
-        
-        let feedback = '';
-        if (personality === 'ruthless') {
-          // Ruthless coach feedback
-          if (score >= 80) {
-            feedback = "✅ Outstanding performance. You're well-prepared for this role.";
-          } else if (score >= 60) {
-            feedback = "⚠️ Decent effort, but you need to dig deeper. More specific examples required.";
-          } else {
-            feedback = "❌ Weak responses. Your preparation is insufficient for this role. Study harder.";
-          }
-        } else {
-          // Supportive coach feedback
-          if (score >= 80) {
-            feedback = "✅ Excellent fit for this role! Great preparation!";
-          } else if (score >= 60) {
-            feedback = "✓ Good potential match! Keep practicing and building confidence.";
-          } else {
-            feedback = "○ Continue preparing and retake the test when ready. You're on the right track!";
-          }
-        }
+    // Add immediate feedback for the answer
+    setTimeout(() => {
+      const feedbackMessage: Message = {
+        id: `msg-${Date.now()}-feedback`,
+        type: 'ai',
+        content: `**Score: ${answerScoringResult.score}/10** (${currentQ.category})
 
-        const scoreSummary = `Interview Complete! 🎉
+${answerScoringResult.feedback}`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, feedbackMessage]);
 
-Your Employability Score: ${score}/100
+      // Then add next question or conclude
+      if (currentQuestion < SAMPLE_QUESTIONS.length - 1) {
+        setTimeout(() => {
+          const nextQuestion = SAMPLE_QUESTIONS[currentQuestion + 1];
+          const nextMessage: Message = {
+            id: `msg-${Date.now()}-ai-next`,
+            type: 'ai',
+            content: nextQuestion.question,
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, nextMessage]);
+          setCurrentQuestion((prev) => prev + 1);
+        }, 800);
+      } else {
+        // Interview complete - show final summary
+        setTimeout(() => {
+          showInterviewSummary();
+        }, 1000);
+      }
+    }, 400);
+  };
 
-Summary:
-• Questions Answered: ${answers.length + 1}/${SAMPLE_QUESTIONS.length}
-• Response Quality: ${answers.reduce((sum, ans) => sum + ans.length, 0) / Math.max(answers.length, 1) > 200 ? 'Excellent' : 'Good'}
-• Job Alignment: ${jobSpec ? 'Analyzed' : 'No job spec provided'}
+  const showInterviewSummary = () => {
+    const score = calculateEmployabilityScore();
+    
+    // Calculate individual scores
+    const allAnswerScores = answers.map((answer, idx) => {
+      const q = SAMPLE_QUESTIONS[idx] || { question: '', category: '' };
+      const scoring = scoreAnswer(q.question, answer, jobSpec, personality);
+      return scoring.score;
+    });
+    const avgScore = allAnswerScores.length > 0 
+      ? (allAnswerScores.reduce((a, b) => a + b, 0) / allAnswerScores.length).toFixed(1)
+      : 0;
 
-${feedback}`;
-        const scoreMessage: Message = {
-          id: `msg-${Date.now()}-ai`,
-          type: 'ai',
-          content: scoreSummary,
-          timestamp: new Date(),
-          isScore: true,
-        };
-        setMessages((prev) => [...prev, scoreMessage]);
-        setCurrentQuestion((prev) => prev + 1);
-      }, 500);
+    let overallFeedback = '';
+    if (personality === 'ruthless') {
+      if (score >= 80) {
+        overallFeedback = "✅ Outstanding performance. You're ready for this role. No major red flags.";
+      } else if (score >= 60) {
+        overallFeedback = "⚠️ You showed promise, but there are gaps. Improve your weak answers before the real interview.";
+      } else {
+        overallFeedback = "❌ Your performance was weak. You're not ready. Practice more and come back when you're serious.";
+      }
+    } else {
+      if (score >= 80) {
+        overallFeedback = "✅ Excellent interview! You demonstrated strong capabilities and great fit for this role!";
+      } else if (score >= 60) {
+        overallFeedback = "✓ Good interview overall! You showed promise. With some practice on the weaker areas, you'll be even stronger!";
+      } else {
+        overallFeedback = "○ Keep practicing! You're building momentum. Each interview is a learning opportunity!";
+      }
     }
+
+    const scoreSummary = `🎉 **Interview Complete!**
+
+📊 **Overall Results:**
+• Employability Score: **${score}/100**
+• Average Answer Score: **${avgScore}/10**
+• Questions Answered: **${answers.length}/${SAMPLE_QUESTIONS.length}**
+
+📈 **Answer Breakdown:**
+${allAnswerScores
+  .map(
+    (s, i) =>
+      `• Q${i + 1}: ${s}/10 - ${SAMPLE_QUESTIONS[i]?.category || 'N/A'}`
+  )
+  .join('\n')}
+
+💡 **Overall Assessment:**
+${overallFeedback}
+
+---
+${personality === 'ruthless' 
+  ? "Be honest with yourself. What will you do differently?" 
+  : "You're making progress. Keep building on your strengths!"}`;
+
+    const scoreMessage: Message = {
+      id: `msg-${Date.now()}-ai-summary`,
+      type: 'ai',
+      content: scoreSummary,
+      timestamp: new Date(),
+      isScore: true,
+    };
+    setMessages((prev) => [...prev, scoreMessage]);
+    setCurrentQuestion((prev) => prev + 1);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -162,7 +276,7 @@ ${feedback}`;
       {
         id: `msg-${Date.now()}-ai`,
         type: 'ai',
-        content: SAMPLE_QUESTIONS[0],
+        content: SAMPLE_QUESTIONS[0].question,
         timestamp: new Date(),
       },
     ]);
