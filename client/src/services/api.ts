@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+// Use environment variable for API base URL. Defaults to localhost for development.
+// In production, this should be set to your HTTPS endpoint.
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || (
+  process.env.NODE_ENV === 'production'
+    ? 'https://api.interview-coach.com' // Update with your actual domain
+    : 'http://localhost:5000'
+);
 
 export const uploadCV = async (formData: FormData): Promise<any> => {
     try {

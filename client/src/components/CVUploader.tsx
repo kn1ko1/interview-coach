@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
 
+// Get API base URL from environment or use defaults
+const getApiUrl = (): string => {
+  if (process.env.REACT_APP_API_BASE_URL) {
+    return process.env.REACT_APP_API_BASE_URL;
+  }
+  return process.env.NODE_ENV === 'production'
+    ? 'https://api.interview-coach.com' // Update with your actual domain
+    : 'http://localhost:5000';
+};
+
 interface CVUploaderProps {
   onUpload: (file: File) => void;
   isModal?: boolean;
@@ -69,7 +79,7 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload, isModal = false }) =>
     try {
       const text = await file.text();
 
-      const response = await fetch('http://localhost:5000/api/cv/upload', {
+      const response = await fetch(`${getApiUrl()}/api/cv/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
