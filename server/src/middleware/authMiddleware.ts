@@ -7,10 +7,13 @@ interface AuthRequest extends Request {
 }
 
 // Get JWT secret from environment - MUST be set in production
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is not set. This is required for authentication.');
-}
+const getJWTSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set. This is required for authentication.');
+  }
+  return secret;
+};
 
 const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
   try {
@@ -24,7 +27,7 @@ const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void
     const token = authHeader.slice(7);
 
     // Verify JWT
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+    const decoded = jwt.verify(token, getJWTSecret()) as { userId: string; email: string };
 
     req.userId = decoded.userId;
     req.email = decoded.email;

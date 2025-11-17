@@ -17,10 +17,13 @@ interface AuthRequest extends Request {
 }
 
 // Get JWT secret from environment - MUST be set in production
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is not set. This is required for authentication.');
-}
+const getJWTSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set. This is required for authentication.');
+  }
+  return secret;
+};
 const JWT_EXPIRY = '7d';
 
 /**
@@ -62,7 +65,7 @@ router.post('/login', blockObviousBots, detectBotActivity, loginRateLimiter, asy
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      JWT_SECRET,
+      getJWTSecret(),
       { expiresIn: JWT_EXPIRY }
     );
 
@@ -98,7 +101,7 @@ router.post('/verify', async (req: AuthRequest, res: Response): Promise<void> =>
     }
 
     // Verify JWT
-    const decoded = jwt.verify(tokenToVerify, JWT_SECRET) as { userId: string; email: string };
+    const decoded = jwt.verify(tokenToVerify, getJWTSecret()) as { userId: string; email: string };
 
     // Get user
     const user = await UserService.getUserById(decoded.userId);
