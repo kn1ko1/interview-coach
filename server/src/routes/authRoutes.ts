@@ -16,7 +16,11 @@ interface AuthRequest extends Request {
   };
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+// Get JWT secret from environment - MUST be set in production
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is not set. This is required for authentication.');
+}
 const JWT_EXPIRY = '7d';
 
 /**
