@@ -35,7 +35,8 @@ const Login: React.FC = () => {
 
     try {
       await verifyToken(tokenInput);
-      history.push('/');
+      // Navigate to /home instead of / since that's where the home page is now
+      history.push('/home');
     } catch (err) {
       setError('Invalid or expired token. Please try again.');
       console.error(err);

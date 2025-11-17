@@ -1,30 +1,24 @@
 import React, { useState } from 'react';
 import CVUploader from '../components/CVUploader';
-import KeywordInput from '../components/KeywordInput';
-import ScoreBadge from '../components/ScoreBadge';
+import ChatInterface from '../components/ChatInterface';
+import JobSpecUploader from '../components/JobSpecUploader';
 import './Home.css';
 
 const Home: React.FC = () => {
-    const [keywords, setKeywords] = useState<string[]>([]);
     const [cv, setCv] = useState<File | null>(null);
-    const [employabilityScore, setEmployabilityScore] = useState<number | null>(null);
+    const [jobSpec, setJobSpec] = useState<string>('');
 
     const handleKeywordChange = (newKeywords: string[]) => {
-        setKeywords(newKeywords);
+        // Removed - keywords section is hidden
     };
 
     const handleCvUpload = (file: File) => {
         setCv(file);
     };
 
-    const calculateScore = () => {
-        // Logic to calculate employability score based on keywords and CV
-        // This is a placeholder for the actual scoring logic
-        const score = Math.floor(Math.random() * 100);
-        setEmployabilityScore(score);
+    const handleJobSpecUpload = (spec: string) => {
+        setJobSpec(spec);
     };
-
-    const isFormValid = cv && keywords.length > 0;
 
     return (
         <div className="home-container">
@@ -35,31 +29,21 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="home-sections">
-                    <div className="section cv-uploader-section">
-                        <CVUploader onUpload={handleCvUpload} />
+                    <div className="uploader-container">
+                        <div className="section cv-uploader-section">
+                            <CVUploader onUpload={handleCvUpload} />
+                        </div>
+
+                        <div className="section keywords-section">
+                            <JobSpecUploader onJobSpecSubmit={handleJobSpecUpload} />
+                        </div>
                     </div>
 
-                    <div className="section keywords-section">
-                        <KeywordInput onChange={handleKeywordChange} />
-                    </div>
-
-                    <div className="section action-section">
-                        <h2>Ready to Get Your Score?</h2>
-                        <button 
-                            className="score-button"
-                            onClick={calculateScore}
-                            disabled={!isFormValid}
-                        >
-                            Get Employability Score
-                        </button>
+                    <div className="section chat-section">
+                        <h2>Interview Chat</h2>
+                        <ChatInterface cv={cv?.name || ''} jobSpec={jobSpec} />
                     </div>
                 </div>
-
-                {employabilityScore !== null && (
-                    <div className="score-badge-container">
-                        <ScoreBadge score={employabilityScore} />
-                    </div>
-                )}
             </div>
         </div>
     );

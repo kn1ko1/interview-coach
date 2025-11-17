@@ -1,8 +1,20 @@
 export async function chatComplete(systemPrompt: string, userPrompt: string, maxTokens = 600) {
   const apiKey = process.env.LLM_API_KEY;
   if (!apiKey) throw new Error("LLM_API_KEY not set");
-  const endpoint = process.env.LLM_CHAT_ENDPOINT || "https://api.openai.com/v1/chat/completions";
-  const body = {
+  
+  const endpoint = process.env.LLM_CHAT_ENDPOINT || "https://api.anthropic.com/v1/messages";
+  const isAnthropic = endpoint.includes('anthropic');
+  
+  // Prepare request body based on provider
+  const body = isAnthropic ? {
+    model: process.env.LLM_CHAT_MODEL || "claude-3-5-haiku-20241022",
+    max_tokens: maxTokens,
+    system: systemPrompt,
+    messages: [
+      { role: "user", content: userPrompt },
+    ],
+    temperature: Number(process.env.LLM_TEMPERATURE || 0.2),
+  } : {
     model: process.env.LLM_CHAT_MODEL || "gpt-4o-mini",
     messages: [
       { role: "system", content: systemPrompt },
@@ -11,13 +23,47 @@ export async function chatComplete(systemPrompt: string, userPrompt: string, max
     max_tokens: maxTokens,
     temperature: Number(process.env.LLM_TEMPERATURE || 0.2),
   };
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify(body),
-  });
-  const json = await res.json();
-  return json?.choices?.[0]?.message?.content || "";
+
+  // Prepare headers based on provider
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (isAnthropic) {
+    headers["x-api-key"] = apiKey;
+    headers["anthropic-version"] = "2023-06-01";
+  } else {
+    headers["Authorization"] = `Bearer ${apiKey}`;
+  }
+
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    const json = await res.json();
+    
+    if (!res.ok) {
+      console.error("LLM API Error:", {
+        status: res.status,
+        provider: isAnthropic ? "Anthropic" : "OpenAI",
+        error: json.error,
+      });
+      throw new Error(`LLM API error: ${json.error?.message || res.statusText}`);
+    }
+
+    // Extract response based on provider format
+    if (isAnthropic) {
+      return json?.content?.[0]?.text || "";
+    } else {
+      return json?.choices?.[0]?.message?.content || "";
+    }
+  } catch (err) {
+    console.error("Chat completion error:", err);
+    throw err;
+  }
 }
 
 // install runtime deps

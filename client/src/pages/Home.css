@@ -1,147 +1,152 @@
-/* Kindle-Style CSS */
+/* Glass Morphism Design */
 
 /* --- Container & Background --- */
 
 .home-container {
-  /* White/Off-White paper-like background */
   min-height: 100vh;
-  background: #fdf6e3; /* A very light, warm sepia tone for a comfortable reading experience */
-  padding: 40px 20px;
-  /* Use a classic, readable serif font (mimicking Bookerly/Caecilia) */
-  font-family: 'Georgia', 'Times New Roman', Times, serif; 
+  background: #f5f5f5;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
 .home-content {
-  /* Narrower width for better line length, like an e-reader page */
-  max-width: 600px; 
+  max-width: 900px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 /* --- Header & Title --- */
 
 .home-header {
   text-align: center;
-  color: #1a1a1a; /* Dark text */
-  margin-bottom: 40px; /* Reduced margin */
-  /* Remove animations for a static, 'printed' look */
+  color: #000;
+  margin-bottom: 40px;
 }
 
 .home-header h1 {
-  font-size: 2.2em; /* Slightly smaller for a more traditional heading */
-  font-weight: bold; /* Standard bold */
+  font-size: 2.8em;
+  font-weight: 700;
   margin: 0 0 10px 0;
-  text-shadow: none; /* Remove text shadow */
+  text-shadow: none;
+  letter-spacing: -0.5px;
 }
 
 .home-header p {
   font-size: 1.1em;
-  opacity: 1; /* Full opacity */
+  color: #666;
   margin: 0;
+  text-shadow: none;
 }
 
 /* --- Sections & Content Boxes --- */
 
 .home-sections {
   display: grid;
-  gap: 20px; /* Reduced gap */
+  gap: 24px;
   margin-bottom: 40px;
 }
 
+.uploader-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
 .section {
-  background: #ffffff; /* Pure white content area */
-  border-radius: 0; /* Remove rounded corners for a flat, page-like appearance */
-  padding: 25px;
-  box-shadow: none; /* Remove shadows */
-  border: 1px solid #e0e0e0; /* Subtle border to define the 'page' */
-  /* Remove animations and hover effects */
-  transition: none; 
-  animation: none;
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s ease;
 }
 
 .section:hover {
-  transform: none; /* Remove lift effect */
-  box-shadow: none;
+  background: #fafafa;
+  border-color: #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .section h2 {
-  color: #1a1a1a; /* Dark text */
-  font-size: 1.4em;
+  color: #000;
+  font-size: 1.6em;
   margin-top: 0;
-  margin-bottom: 15px;
-  /* Use a simple, minimal underline instead of a thick colored border */
-  border-bottom: 1px solid #333; 
-  padding-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+  font-weight: 600;
 }
 
 /* --- Specific Sections --- */
 
 .cv-uploader-section,
 .keywords-section {
+  grid-column: auto;
+}
+
+.chat-section {
   grid-column: 1 / -1;
 }
 
 .action-section {
   text-align: center;
-  /* Use a minimal dark background instead of a vibrant gradient */
-  background: #333; 
-  color: white;
+  background: #fff;
+  color: #000;
   grid-column: 1 / -1;
-  padding: 20px; /* Add padding to the action section for definition */
-  border-radius: 0; /* Flat corners */
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .action-section h2 {
-  border-bottom-color: #fdf6e3; /* Light border in dark section */
+  border-bottom-color: #e0e0e0;
+  color: #000;
 }
 
 /* --- Button Styling --- */
 
 .score-button {
-  /* Use high-contrast, non-vibrant button colors */
-  background-color: #0077cc; /* A classic blue for action */
-  color: white;
-  border: none;
-  padding: 12px 30px;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 12px 32px;
   font-size: 1em;
   font-weight: 600;
-  border-radius: 4px; /* Slightly rounded, but minimal */
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: none; /* Remove shadows */
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-shadow: none;
 }
 
 .score-button:hover {
-  background-color: #005fa3; /* Darker blue on hover */
-  transform: none; /* Remove scale effect */
-  box-shadow: none;
+  background: linear-gradient(135deg, #e0e0e0 0%, #d8d8d8 100%);
+  border-color: #ccc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .score-button:disabled {
-  background-color: #cccccc;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .score-badge-container {
   display: flex;
   justify-content: center;
   margin-top: 30px;
-  /* Remove animation */
-  animation: none;
 }
 
-/* --- Animations (Removed) --- */
 
-/* Remove all keyframe definitions as they break the static, 'printed' feel */
-/* @keyframes fadeInDown { ... }
-@keyframes fadeInUp { ... }
-@keyframes fadeIn { ... } 
-*/
-
-
-/* --- Responsive Design (Updated for Kindle Aesthetic) --- */
+/* --- Responsive Design --- */
 
 @media (max-width: 768px) {
   .home-container {
@@ -149,11 +154,11 @@
   }
 
   .home-header h1 {
-    font-size: 1.8em;
+    font-size: 2em;
   }
 
   .home-content {
-    max-width: 100%; /* Allows full width on small screens */
+    max-width: 100%;
   }
 
   .section {
@@ -161,27 +166,123 @@
   }
 
   .section h2 {
-    font-size: 1.25em;
+    font-size: 1.35em;
   }
 
   .score-button {
     padding: 10px 25px;
-    font-size: 1em;
+    font-size: 0.95em;
   }
 }
 
 @media (max-width: 480px) {
   .home-header h1 {
-    font-size: 1.4em;
+    font-size: 1.6em;
   }
 
   .section {
     padding: 15px;
-    border-radius: 0;
   }
 
   .score-button {
     width: 100%;
     padding: 12px 20px;
   }
+}
+
+/* CV Uploader Modal Style */
+.cv-uploader,
+.cv-uploader-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cv-uploader h2,
+.job-spec-uploader h2,
+.job-spec-uploader-modal h2 {
+  color: #000;
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+}
+
+.file-input-wrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px dashed #ddd;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.file-input-wrapper.drag-over {
+  background: #f0f0f0;
+  border-color: #bbb;
+  transform: scale(1.02);
+}
+
+.file-input-wrapper input {
+  display: none;
+}
+
+.file-label {
+  cursor: pointer;
+  color: #666;
+  font-size: 14px;
+  display: block;
+}
+
+.drag-drop-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.drag-drop-text p {
+  margin: 5px 0;
+}
+
+.upload-button {
+  padding: 12px 24px;
+  background: #f0f0f0;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.upload-button:hover:not(:disabled) {
+  background: #e8e8e8;
+  border-color: #ccc;
+  transform: translateY(-2px);
+}
+
+.upload-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: #ffe0e0;
+  border: 1px solid #ffb3b3;
+  color: #cc0000;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.success-message {
+  background: #e0ffe0;
+  border: 1px solid #b3ffb3;
+  color: #00aa00;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
 }

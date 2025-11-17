@@ -1,8 +1,8 @@
 # Interview Coach MVP
 
-**Project:** AI-powered interview prep system that transforms CVs and Job Descriptions into actionable stories, mock interview practice, and personalized feedback — all with simple email login persistence.
+**Project:** AI-powered interview prep system powered by Claude Haiku API that transforms CVs and Job Descriptions into mock interviews, employability scoring, and personalized feedback — all with simple email login persistence.
 
-**Goal:** Help job seekers (career changers, immigrants, anyone) prepare confidently for interviews through structured practice and feedback.
+**Goal:** Help job seekers (career changers, immigrants, anyone) prepare confidently for interviews through structured practice and AI-driven feedback.
 
 ---
 
@@ -10,53 +10,69 @@
 
 The MVP is structured as a **3-stage curriculum**:
 
-### Stage 1: CV + Keywords Upload
-- Users upload/paste their CV
-- Users input role-specific keywords
+### Stage 1: CV + Job Spec Analysis (Current MVP)
+- Users upload their CV (PDF/DOC)
+- Users paste job description/specification
 - AI extracts roles, achievements, skills from CV
-- System calculates CV ↔ Keywords match score
-- **Cost:** Free (rules-based matching)
+- AI analyzes CV ↔ Job Spec match
+- System calculates alignment score
+- **Cost:** ~$0.0001 per use (Claude Haiku API)
 
-### Stage 2: Story Bank (AI-Powered)
-- Convert CV bullets into STAR stories
-- Categorize stories by competencies
+### Stage 2: Mock Interviews + Chat Practice
+- 5 sample interview questions presented sequentially
+- Users answer via chat interface in real-time
+- AI provides constructive feedback on each response
+- Employability score (0-100) calculated based on:
+  - Number of questions answered (15pts each)
+  - Response quality and depth (10-20pts bonus)
+  - Job specification keyword matching (up to 15pts bonus)
+- Summary report with insights and recommendations
+- **Cost:** ~$0.001-0.005 per interview (Claude Haiku API)
+
+### Stage 3: Story Bank + Advanced Analysis (Roadmap)
+- Convert CV bullets into STAR stories aligned with job spec
+- Categorize stories by job requirements
 - Users can edit and save stories
-- Powered by **Ollama** (runs locally, free)
-- **Cost:** Free (local LLM)
-
-### Stage 3: Mock Interviews + Feedback
-- AI generates tailored questions from CV + keywords
-- Users answer via text
-- Instant feedback on answer quality
-- Summary report with improvements
-- **Cost:** Free (local LLM)
+- Voice recording for answers
+- **Cost:** ~$0.01 per story generation (Claude API)
 
 ---
 
 ## 🎯 Core Features
 
 ✅ **Email Login + Persistence**
-- Simple email authentication (no password complexity)
+- Simple email authentication with 6-digit verification code
 - Saves all progress to database
 - Resume sessions across devices
+- Session management with JWT tokens
 
-✅ **CV Analysis**
-- Extract skills, achievements, roles
-- Quick visual match vs job keywords
+✅ **Bot & Security Protection**
+- Multi-layer bot detection (User-Agent, Email patterns, Request timing)
+- Rate limiting: 5 login attempts per 15 minutes
+- Email verification codes prevent automated access
+- Suspicious activity flagging and blocking
+- Protection against common AI/crawler patterns
 
-✅ **AI Story Generation**
-- STAR format stories from CV bullets
-- Powered by Ollama (local, free)
+✅ **CV + Job Spec Analysis**
+- Extract skills, achievements, roles from CV
+- Parse job requirements from job spec
+- AI-powered match scoring and gaps analysis
+- File validation (PDF/DOC only, max 5MB)
 
-✅ **Mock Interviews**
-- Tailored questions based on CV + keywords
-- Text-based answers with instant feedback
+✅ **Mock Interviews (Chat Interface)**
+- 5 sample interview questions presented sequentially
+- Text-based answers via chat with Claude Haiku API
+- Instant feedback on answer quality
 - Tone: Supportive and constructive
+- Real-time scoring as you answer
 
-✅ **Feedback Reports**
-- Answer quality assessment
-- Suggested improvements
-- Key takeaways for practice
+✅ **Employability Scoring**
+- Calculates score 0-100 based on:
+  - Questions completed (15pts per question)
+  - Response quality (10-20pts bonus)
+  - Job spec alignment (up to 15pts bonus)
+- Summary with strengths, gaps, and recommendations
+- Interview restart capability
 
 ---
 
@@ -64,11 +80,16 @@ The MVP is structured as a **3-stage curriculum**:
 
 | Feature | Cost |
 |---------|------|
-| **Local LLM (Ollama)** | $0 |
+| **Claude Haiku API** | ~$0.25/month (at ~1000 interviews/month) |
 | **Database (SQLite/PostgreSQL)** | $0-15/month |
 | **Email Service** | $0-10/month |
 | **Hosting (optional)** | $0-30/month |
-| **Total MVP Cost** | **$0-55/month** |
+| **Total MVP Cost** | **~$0.25-55/month** |
+
+**Cost Rationale:**
+- Claude Haiku: ~$0.80 per 1M input tokens, ~$2.40 per 1M output tokens
+- Typical interview session: 2,000-3,000 tokens = ~$0.005-0.01
+- 1000 interviews/month = ~$5-10 in API costs (well under $1 per user)
 
 ---
 
@@ -86,16 +107,25 @@ The MVP is structured as a **3-stage curriculum**:
 - JWT authentication (email-based)
 
 **AI/LLM**
-- **Ollama** (local, free, runs on laptop)
-- Models: Mistral 7B or Llama 2
+- **Claude Haiku API** (via Anthropic)
+- Models: Claude 3.5 Haiku (fastest, most cost-effective)
+- Fallback: OpenAI GPT-4 Turbo (optional)
 
 **Database**
 - SQLite (development) / PostgreSQL (production)
-- Session storage, user data, story bank
+- Session storage, user data, interview history
+
+**Security**
+- Email-based login with 6-digit verification codes
+- Multi-layer bot detection and prevention
+- Rate limiting (5 attempts per 15 minutes)
+- JWT tokens for session management
 
 **Authentication**
-- Email-based login (simple, no passwords initially)
-- JWT tokens for session management
+- Email-based login (simple, no passwords)
+- Email verification codes (6-digit)
+- JWT tokens with expiration
+- Session persistence across devices
 
 ---
 
@@ -103,8 +133,8 @@ The MVP is structured as a **3-stage curriculum**:
 
 ### Prerequisites
 - Node.js 18+ (for server)
-- Node.js 16 (for client, if using react-scripts 5.0.1)
-- Ollama installed locally (https://ollama.ai)
+- Node.js 16+ (for client)
+- Claude Haiku API key from Anthropic (https://console.anthropic.com)
 
 ### 1. Clone & Install Dependencies
 
@@ -121,25 +151,18 @@ cd ../client
 npm install
 ```
 
-### 2. Start Ollama (Local LLM)
-
-```bash
-# Download and run Ollama
-ollama pull mistral
-ollama serve
-# Ollama API will be available at http://localhost:11434
-```
-
-### 3. Setup Environment Variables
+### 2. Setup Environment Variables
 
 **Server** (`.env`):
 ```
 PORT=5000
 DATABASE_URL=sqlite:./interview_coach.db
-OLLAMA_API_URL=http://localhost:11434
+CLAUDE_API_KEY=your_anthropic_api_key
+OPENAI_API_KEY=your_openai_key_here  # Optional fallback
 EMAIL_SERVICE=sendgrid  # or nodemailer
-EMAIL_API_KEY=your_key_here
-JWT_SECRET=your_secret_key
+EMAIL_API_KEY=your_email_service_key
+JWT_SECRET=your_jwt_secret_key
+NODE_ENV=development
 ```
 
 **Client** (`.env`):
@@ -147,11 +170,10 @@ JWT_SECRET=your_secret_key
 REACT_APP_API_URL=http://localhost:5000
 ```
 
-### 4. Run the Application
+### 3. Run the Application
 
 **Terminal 1 - Start Server:**
 ```bash
-nvm use 18
 cd server
 npm run dev
 # Server runs on http://localhost:5000
@@ -159,7 +181,6 @@ npm run dev
 
 **Terminal 2 - Start Client:**
 ```bash
-nvm use 16
 cd client
 npm start
 # Client runs on http://localhost:3000
@@ -169,13 +190,13 @@ npm start
 
 ## 🎓 User Journey
 
-1. **Sign up** with email (no password)
-2. **Upload CV** + input **job keywords**
-3. **View match score** + CV analysis
-4. **Convert stories** from CV (AI-powered)
-5. **Practice mock interviews** with feedback
-6. **Get report** with improvement suggestions
-7. **Save & resume** session anytime
+1. **Sign up** with email + verification code
+2. **Upload CV** (PDF/DOC) + **paste job description**
+3. **Answer 5 interview questions** via chat interface
+4. **Receive employability score** (0-100) with breakdown
+5. **Get personalized feedback** on each response
+6. **View summary report** with strengths and gaps
+7. **Restart or exit** interview to try again or save progress
 
 ---
 
@@ -204,40 +225,49 @@ interview-coach/
 
 ## 🚀 Roadmap (Future Versions)
 
-**V1 (Current MVP)**
-- Email login + persistence
-- CV upload + keyword matching
-- Story generation (Ollama)
-- Mock interviews (hardcoded questions)
-- Feedback reports
+**V1 (Current MVP)** ✅ IN PROGRESS
+- Email login + 6-digit verification + persistence
+- CV upload (PDF/DOC) + job spec paste
+- Bot detection + rate limiting + security middleware
+- Mock interviews with 5 sample questions
+- Real-time employability scoring (0-100)
+- Feedback reports with Claude Haiku API
+- Styled UI with soft white theme
 
-**V2**
-- Claude/GPT integration (optional, paid)
+**V2** (Next Phase)
+- Dynamic question generation (based on CV + job spec)
 - Voice recording for answers
-- Dual personality mode (Ruthless/Supportive)
-- More interview question templates
+- Interview history & progress tracking
+- Dual personality mode (Ruthless/Supportive coach)
+- Export interview reports as PDF
+- Multiple interview sets per session
 
-**V3**
-- Analytics dashboard
-- Progress tracking
-- Community questions
-- Integration with job boards
+**V3** (Future)
+- Analytics dashboard (score trends, common weaknesses)
+- Community question bank
+- Integration with job boards (Indeed, LinkedIn)
+- Video interview simulation with webcam
+- Peer comparison (anonymized)
 
 ---
 
 ## 🛠️ Development
 
 **Tech Stack Rationale:**
-- **Ollama:** Free, local, no API costs
-- **Plain CSS:** Faster, no build complexity
-- **SQLite:** Zero setup, perfect for MVP
-- **Email-based auth:** Simple UX, no password complexity
+- **Claude Haiku API:** $0.80/1M tokens (cost-effective for MVP scale)
+- **React + TypeScript:** Type-safe, scalable, industry standard
+- **Plain CSS:** Fast, no build complexity, easy to customize
+- **Express.js:** Lightweight, perfect for RESTful APIs
+- **SQLite/PostgreSQL:** Zero setup, perfect for MVP → production scaling
+- **Email-based auth:** Simple UX, no password complexity, 6-digit verification prevents bots
+- **Multi-layer bot detection:** Protects against automated access without UX friction
 
 **Why this approach:**
-- MVP focuses on core value (interview prep)
-- Authentication & persistence added early
-- AI integration is local-first (no cloud costs)
-- Easy to scale up later
+- MVP focuses on core value (interview prep + AI feedback)
+- Authentication & security added early to prevent abuse
+- Claude Haiku provides best cost/quality ratio for conversational AI
+- Easy to scale: swap to Claude 3 Opus or GPT-4 when needed
+- Bot detection prevents exploitation while maintaining user simplicity
 
 ---
 

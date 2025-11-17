@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 import { UserService } from '../services/userService';
 import { AuthService } from '../services/authService';
 import { EmailService } from '../services/emailService';
+import { loginRateLimiter, registrationRateLimiter } from '../middleware/rateLimiter';
+import { detectBotActivity, blockObviousBots } from '../middleware/botDetection';
+import { storeVerificationCode, verifyCode, isValidEmail, isDisposableEmail } from '../middleware/emailVerification';
 
 const router = express.Router();
 
@@ -19,8 +22,9 @@ const JWT_EXPIRY = '7d';
 /**
  * POST /api/auth/login
  * Send login email with token
+ * Protected by rate limiting and bot detection
  */
-router.post('/login', async (req: AuthRequest, res: Response): Promise<void> => {
+router.post('/login', blockObviousBots, detectBotActivity, loginRateLimiter, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { email } = req.body;
 
@@ -29,9 +33,23 @@ router.post('/login', async (req: AuthRequest, res: Response): Promise<void> => 
       return;
     }
 
-    if (!AuthService.validateEmail(email)) {
+    if (!isValidEmail(email)) {
       res.status(400).json({ error: 'Invalid email format' });
       return;
+    }
+
+    // Check for disposable email (optional)
+    if (isDisposableEmail(email)) {
+      console.warn(`[SECURITY] Disposable email login attempt: ${email}`);
+      // You can either block it or just log it
+      // res.status(400).json({ error: 'Disposable email addresses not allowed' });
+      // return;
+    }
+
+    // Check if bot activity was detected - log but don't block automatically
+    if ((req as any).isSuspiciousActivity) {
+      console.warn(`[BOT-CHECK] Suspicious login attempt from ${email}`);
+      // Add to monitoring system in production
     }
 
     // Create or get user

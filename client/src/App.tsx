@@ -15,11 +15,15 @@ const App: React.FC = () => {
         <div className="App">
           <Switch>
             <Route path="/login" component={Login} />
-            <ProtectedRoute path="/" exact component={Home} />
+            <ProtectedRoute path="/home" exact component={Home} />
             <ProtectedRoute path="/interview" component={Interview} />
             <ProtectedRoute path="/results" component={Results} />
+            {/* Redirect root to login (unless already authenticated - ProtectedRoute will handle) */}
+            <Route path="/">
+              <Redirect to="/login" />
+            </Route>
             <Route path="*">
-              <Redirect to="/" />
+              <Redirect to="/login" />
             </Route>
           </Switch>
         </div>
