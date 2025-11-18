@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
+import '../styles/CVUploader.css';
 
 // Get API base URL from environment or use defaults
 const getApiUrl = (): string => {
@@ -110,11 +111,11 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload, isModal = false }) =>
     <div className={containerClass}>
       <h2>Upload Your CV</h2>
       
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
+      {error && <div className="cv-error">{error}</div>}
+      {success && <div className="cv-success">{success}</div>}
 
       <div 
-        className={`file-input-wrapper ${isDragOver ? 'drag-over' : ''}`}
+        className={`cv-upload-area ${isDragOver ? 'drag-over' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -125,14 +126,19 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload, isModal = false }) =>
           onChange={handleFileSelect}
           disabled={loading}
           id="cv-file-input"
+          className="cv-upload-input"
         />
-        <label htmlFor="cv-file-input" className="file-label">
+        <label htmlFor="cv-file-input" style={{ cursor: 'pointer', width: '100%' }}>
           {file ? (
-            <span>{file.name}</span>
+            <div className="cv-file-info">
+              <p className="cv-upload-text">✓ {file.name}</p>
+              <p className="cv-upload-subtext">{(file.size / 1024).toFixed(2)} KB</p>
+            </div>
           ) : (
-            <div className="drag-drop-text">
-              <p>📄 Drag and drop your CV</p>
-              <p style={{ fontSize: '0.9em', marginTop: '8px' }}>or click to select</p>
+            <div>
+              <div className="cv-upload-icon">📄</div>
+              <p className="cv-upload-text">Drag and drop your CV</p>
+              <p className="cv-upload-subtext">or click to select (PDF, TXT, DOC, DOCX)</p>
             </div>
           )}
         </label>
@@ -141,10 +147,19 @@ const CVUploader: React.FC<CVUploaderProps> = ({ onUpload, isModal = false }) =>
       <button
         onClick={handleUpload}
         disabled={!file || loading}
-        className="upload-button"
+        className="cv-upload-button"
       >
         {loading ? 'Uploading...' : 'Upload CV'}
       </button>
+      
+      {file && (
+        <button
+          onClick={() => setFile(null)}
+          className="cv-clear-button"
+        >
+          Clear
+        </button>
+      )}
     </div>
   );
 };

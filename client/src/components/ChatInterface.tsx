@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import '../styles/ChatInterface.css';
 import { PersonalityMode } from './PersonalitySelector';
 import { scoreAnswer, analyzeCV } from '../services/scoringService';
+import CVScoreVisualization from './CVScoreVisualization';
 
 interface Message {
   id: string;
@@ -47,18 +48,6 @@ const SAMPLE_QUESTIONS = [
   {
     question: "Tell me about a time you mentored or helped a junior team member grow.",
     category: "Leadership"
-  },
-  {
-    question: "How do you stay current with new technologies and industry trends?",
-    category: "Continuous Learning"
-  },
-  {
-    question: "Describe a situation where you had to deal with conflicting priorities. How did you handle it?",
-    category: "Conflict Resolution"
-  },
-  {
-    question: "What's your experience with code review processes and giving/receiving feedback?",
-    category: "Code Quality"
   },
 ];
 
@@ -212,13 +201,13 @@ ${answerScoringResult.feedback}`,
       : 0;
 
     let overallFeedback = '';
-    if (personality === 'ruthless') {
+    if (personality === 'direct') {
       if (score >= 80) {
-        overallFeedback = "✅ Outstanding performance. You're ready for this role. No major red flags.";
+        overallFeedback = "✅ Outstanding performance. You're ready for this role. No major concerns.";
       } else if (score >= 60) {
-        overallFeedback = "⚠️ You showed promise, but there are gaps. Improve your weak answers before the real interview.";
+        overallFeedback = "⚠️ You showed competence, but there are gaps to address. Work on the weaker areas before your interview.";
       } else {
-        overallFeedback = "❌ Your performance was weak. You're not ready. Practice more and come back when you're serious.";
+        overallFeedback = "❌ Your performance needs improvement. Practice and come back when you're more prepared.";
       }
     } else {
       if (score >= 80) {
@@ -249,8 +238,8 @@ ${allAnswerScores
 ${overallFeedback}
 
 ---
-${personality === 'ruthless' 
-  ? "Be honest with yourself. What will you do differently?" 
+${personality === 'direct' 
+  ? "Reflect on this feedback. What will you do differently?" 
   : "You're making progress. Keep building on your strengths!"}`;
 
     const scoreMessage: Message = {

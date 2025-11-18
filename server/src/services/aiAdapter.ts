@@ -1,19 +1,19 @@
-export type PersonalityMode = 'supportive' | 'ruthless';
+export type PersonalityMode = 'supportive' | 'direct';
 
 /**
  * Get personality-specific system prompt enhancement
  */
 function getPersonalityPromptAddition(personality: PersonalityMode): string {
-  if (personality === 'ruthless') {
+  if (personality === 'direct') {
     return `
 
-PERSONALITY: You are a ruthless, direct interview coach. Provide honest, critical feedback.
-- Don't sugarcoat weaknesses
-- Highlight gaps directly
-- Challenge vague responses
-- Demand specific examples
-- Be blunt about what needs improvement
-- Focus on what the candidate is missing`;
+PERSONALITY: You are a direct, rigorous interview coach. Provide honest, detailed feedback.
+- Give clear, constructive critique
+- Highlight specific gaps in responses
+- Challenge vague or incomplete answers
+- Demand concrete examples and specifics
+- Be direct about areas needing improvement
+- Focus on performance gaps and solutions`;
   }
   
   return `

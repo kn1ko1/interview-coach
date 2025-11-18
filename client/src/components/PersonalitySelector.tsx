@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/PersonalitySelector.css';
 
-export type PersonalityMode = 'supportive' | 'ruthless';
+export type PersonalityMode = 'supportive' | 'direct';
 
 interface PersonalitySelectorProps {
   selectedPersonality: PersonalityMode;
@@ -30,14 +30,14 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
         </button>
 
         <button
-          className={`personality-button ruthless ${selectedPersonality === 'ruthless' ? 'active' : ''}`}
-          onClick={() => onPersonalityChange('ruthless')}
+          className={`personality-button direct ${selectedPersonality === 'direct' ? 'active' : ''}`}
+          onClick={() => onPersonalityChange('direct')}
           disabled={disabled}
-          title="Ruthless: Direct, critical feedback for tough preparation"
+          title="Direct: Honest, detailed feedback for focused preparation"
         >
           <span className="personality-icon">🎯</span>
-          <span className="personality-name">Ruthless</span>
-          <span className="personality-desc">Direct & critical feedback</span>
+          <span className="personality-name">Direct Coach</span>
+          <span className="personality-desc">Honest & detailed feedback</span>
         </button>
       </div>
     </div>

@@ -101,17 +101,17 @@ function generateAnswerFeedback(
   specificityCount: number,
   personality: PersonalityMode
 ): string {
-  if (personality === 'ruthless') {
+  if (personality === 'direct') {
     if (score >= 8) {
-      return `✅ Strong answer (${score}/10). Specific and relevant. Keep this quality up.`;
+      return `✅ Strong answer (${score}/10). Specific and relevant. Maintain this quality.`;
     } else if (score >= 6.5) {
-      return `⚠️ Acceptable (${score}/10), but vague. You need more specific examples. Why didn't you mention concrete technologies or metrics? Dig deeper.`;
+      return `⚠️ Good (${score}/10), but could be stronger. Add more specific examples or metrics. Include concrete technologies or outcomes you achieved.`;
     } else if (score >= 5) {
-      return `❌ Weak (${score}/10). You're avoiding specifics. Add concrete examples, technologies, or numbers. Show you actually did the work, don't just talk about it.`;
+      return `❌ Needs work (${score}/10). Your answer is too vague. Include specific examples, technologies, or measurable results. Show concrete evidence, not just concepts.`;
     } else if (score >= 2.5) {
-      return `🔴 Poor (${score}/10). This is too brief and generic. You're wasting time. Expand with real examples or your answer will cost you the job.`;
+      return `🔴 Weak response (${score}/10). This lacks substance and specifics. Add real examples, detailed context, or metrics to strengthen your answer.`;
     } else {
-      return `🔴 Irrelevant (${score}/10). You didn't even answer the question properly. Start over with focus.`;
+      return `🔴 Off-topic (${score}/10). Your answer doesn't directly address the question. Refocus and answer what was asked.`;
     }
   } else {
     // Supportive feedback
@@ -222,15 +222,15 @@ function generateCVFeedback(
   weaknesses: string[],
   personality: PersonalityMode
 ): string {
-  if (personality === 'ruthless') {
+  if (personality === 'direct') {
     if (strength >= 8 && alignment >= 80) {
-      return `✅ Your CV is strong (${strength}/10, ${alignment}% job alignment). You're well-positioned for this role.`;
+      return `✅ Your CV is strong (${strength}/10, ${alignment}% job alignment). Well-positioned for this role.`;
     } else if (strength >= 6 && alignment >= 60) {
-      return `⚠️ Your CV is decent (${strength}/10, ${alignment}% alignment), but there are gaps. You're missing some key technologies or achievements. Shore it up before applying.`;
+      return `⚠️ Your CV is solid (${strength}/10, ${alignment}% alignment), but there are gaps. Consider adding key technologies or achievements that align with the role.`;
     } else if (strength >= 4 && alignment >= 40) {
-      return `❌ Your CV is weak (${strength}/10, ${alignment}% alignment). You don't have enough of what they're looking for. Add more relevant projects, metrics, or skills.`;
+      return `❌ Your CV needs improvement (${strength}/10, ${alignment}% alignment). You're missing relevant experience. Consider building experience in key areas or tailoring your CV better.`;
     } else {
-      return `🔴 Your CV is a poor fit (${strength}/10, ${alignment}% alignment). You're not ready for this role. Build more experience or retarget your applications.`;
+      return `🔴 Your CV is not a good fit (${strength}/10, ${alignment}% alignment). Significant gaps in alignment. Gain more relevant experience before applying to similar roles.`;
     }
   } else {
     // Supportive feedback
