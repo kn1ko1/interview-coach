@@ -3,6 +3,7 @@ import '../styles/ChatInterface.css';
 import { PersonalityMode } from './PersonalitySelector';
 import { scoreAnswer, analyzeCV } from '../services/scoringService';
 import CVScoreVisualization from './CVScoreVisualization';
+import QuestionTimer from './QuestionTimer';
 
 interface Message {
   id: string;
@@ -56,6 +57,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = fal
   const [inputValue, setInputValue] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [answerTimings, setAnswerTimings] = useState<number[]>([]); // Track time per answer
+  const [timerActive, setTimerActive] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize with CV strength analysis + first sample question
@@ -127,6 +130,11 @@ Now let's get started with the interview!`,
 
   const handleSendMessage = () => {
     if (!inputValue.trim() || isLoading) return;
+
+    // Start timer on first answer for Performance coach
+    if (currentQuestion === 0 && personality === 'performance' && !timerActive) {
+      setTimerActive(true);
+    }
 
     const userMessage: Message = {
       id: `msg-${Date.now()}-user`,
@@ -276,6 +284,18 @@ ${personality === 'performance'
 
   return (
     <div className="chat-interface">
+      {/* Timer - Only show for Performance coach */}
+      {personality === 'performance' && timerActive && (
+        <QuestionTimer
+          isActive={timerActive && currentQuestion < SAMPLE_QUESTIONS.length}
+          personality={personality}
+          suggestedTimeSeconds={180}
+          onTimerUpdate={(seconds) => {
+            // Timer is updating, no action needed
+          }}
+        />
+      )}
+
       <div className="chat-messages">
         {messages.length === 0 && (
           <div className="chat-empty-state">
