@@ -1,0 +1,437 @@
+/* Interview Dashboard - Modern Challenge-Based Interview Flow */
+
+.interview-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 16px;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  padding: 0 12px;
+  margin-bottom: 4px;
+}
+
+.sidebar-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-metrics .metrics-card {
+  padding: 16px;
+  margin-bottom: 0;
+}
+
+.status-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.status-badge {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.status-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Main Interview Content */
+.interview-main {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.interview-header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.interview-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.interview-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.interview-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.interview-section {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.interview-section:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-md);
+}
+
+.interview-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Upload Section */
+.upload-section {
+  border-color: var(--accent-primary);
+}
+
+.upload-success {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(46, 204, 113, 0.1);
+  border-left: 3px solid var(--accent-secondary);
+  color: var(--accent-secondary);
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+/* Keywords Section */
+.keywords-section {
+  border-color: var(--accent-warning);
+}
+
+/* Questions Section */
+.questions-section {
+  border-color: var(--accent-primary);
+}
+
+.questions-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.question-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.question-item:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-hover);
+  transform: translateY(-2px);
+}
+
+.question-item.active {
+  border-color: var(--accent-primary);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(74, 144, 226, 0.1) 100%);
+  box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
+}
+
+.question-item.answered {
+  opacity: 0.8;
+}
+
+.question-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-primary), #3a7bc8);
+  border-radius: 6px;
+  font-weight: 700;
+  color: white;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.question-item.answered .question-badge {
+  background: linear-gradient(135deg, var(--accent-secondary), #27ae60);
+}
+
+.question-preview {
+  flex: 1;
+  min-width: 0;
+}
+
+.question-category {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.question-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.question-checkmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--accent-secondary);
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Current Question Editor */
+.current-question {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.question-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.q-number {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.q-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+}
+
+.question-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+
+.question-textarea {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 200px;
+  transition: all 0.2s ease;
+}
+
+.question-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.question-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.question-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-prev,
+.btn-next {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-prev:hover:not(:disabled),
+.btn-next:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+  color: var(--accent-primary);
+}
+
+.btn-prev:disabled,
+.btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Submit Section */
+.submit-section {
+  border-color: var(--accent-secondary);
+  text-align: center;
+}
+
+.btn-submit-interview {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, var(--accent-primary), #3a7bc8);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.3);
+  min-width: 240px;
+}
+
+.btn-submit-interview:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+.btn-submit-interview:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.submit-help {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.score-result {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .interview-main {
+    padding: 24px;
+  }
+
+  .interview-header h1 {
+    font-size: 28px;
+  }
+
+  .questions-container {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .interview-main {
+    padding: 16px;
+  }
+
+  .interview-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .interview-header h1 {
+    font-size: 24px;
+  }
+
+  .interview-section {
+    padding: 16px;
+  }
+
+  .interview-sections {
+    gap: 20px;
+  }
+
+  .questions-container {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+  }
+
+  .question-item {
+    padding: 10px;
+  }
+
+  .question-textarea {
+    min-height: 150px;
+    padding: 12px;
+  }
+
+  .btn-submit-interview {
+    width: 100%;
+    padding: 14px 20px;
+  }
+}
