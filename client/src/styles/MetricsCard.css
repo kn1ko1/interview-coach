@@ -1,0 +1,122 @@
+/* Metrics Card - Dashboard Metrics Display */
+
+.metrics-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+  min-height: 120px;
+}
+
+.metrics-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.metrics-icon {
+  font-size: 28px;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.metrics-content {
+  flex: 1;
+}
+
+.metrics-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.metrics-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.metrics-subtitle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.metrics-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), #3a7bc8);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.metrics-footer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Variant styles */
+.metrics-primary {
+  border-left: 3px solid var(--accent-primary);
+}
+
+.metrics-success {
+  border-left: 3px solid var(--accent-secondary);
+}
+
+.metrics-warning {
+  border-left: 3px solid var(--accent-warning);
+}
+
+.metrics-info {
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .metrics-card {
+    padding: 16px;
+    min-height: 100px;
+  }
+
+  .metrics-icon {
+    font-size: 24px;
+  }
+
+  .metrics-value {
+    font-size: 24px;
+  }
+
+  .metrics-title {
+    font-size: 11px;
+  }
+}

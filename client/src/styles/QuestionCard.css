@@ -1,0 +1,309 @@
+/* Question Card - Modern Challenge Style */
+
+.question-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Legacy style fallback */
+.question-card.legacy h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.question-card.legacy textarea {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.question-card.legacy textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Modern card interactions */
+.question-card.modern:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-md);
+}
+
+.question-card.modern.active {
+  border-color: var(--accent-primary);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(74, 144, 226, 0.05) 100%);
+  box-shadow: 0 0 20px rgba(74, 144, 226, 0.2), var(--shadow-md);
+}
+
+.question-card.modern.answered {
+  opacity: 0.85;
+  border-color: var(--accent-secondary);
+}
+
+.question-card.modern.answered .question-status {
+  color: var(--accent-secondary);
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.question-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.question-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-primary), #3a7bc8);
+  border-radius: 8px;
+  font-weight: 700;
+  color: white;
+  font-size: 14px;
+}
+
+.question-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.question-status {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(46, 204, 113, 0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-secondary);
+}
+
+.question-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.question-content {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.question-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.question-input-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.question-input {
+  width: 100%;
+  padding: 14px 16px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 140px;
+  transition: all 0.2s ease;
+}
+
+.question-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.question-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.question-input.focused {
+  border-color: var(--accent-primary);
+}
+
+.question-input.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--bg-primary);
+}
+
+.question-score {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-secondary);
+}
+
+.question-score.score-excellent {
+  border-left-color: #27ae60;
+  background-color: rgba(39, 174, 96, 0.1);
+}
+
+.question-score.score-good {
+  border-left-color: #f39c12;
+  background-color: rgba(243, 156, 18, 0.1);
+}
+
+.question-score.score-fair {
+  border-left-color: #e67e22;
+  background-color: rgba(230, 126, 34, 0.1);
+}
+
+.question-score.score-needs-work {
+  border-left-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.score-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.score-max {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.score-bar {
+  height: 6px;
+  background-color: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), #3a7bc8);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.question-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-submit,
+.btn-next {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, var(--accent-primary), #3a7bc8);
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-next {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  border: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .question-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .question-card.modern:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .question-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .question-text {
+    font-size: 16px;
+  }
+
+  .question-input {
+    min-height: 120px;
+    padding: 12px 14px;
+  }
+
+  .btn-submit,
+  .btn-next {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
