@@ -26,7 +26,7 @@ export function scoreAnswer(
   question: string,
   answer: string,
   jobSpec: string = '',
-  personality: PersonalityMode = 'supportive'
+  personality: PersonalityMode = 'confidence'
 ): AnswerScoring {
   let score = 0;
 
@@ -99,9 +99,9 @@ function generateAnswerFeedback(
   answer: string,
   wordCount: number,
   specificityCount: number,
-  personality: PersonalityMode
+  personality: PersonalityMode = 'confidence'
 ): string {
-  if (personality === 'direct') {
+  if (personality === 'performance') {
     if (score >= 8) {
       return `✅ Strong answer (${score}/10). Specific and relevant. Maintain this quality.`;
     } else if (score >= 6.5) {
@@ -135,7 +135,7 @@ function generateAnswerFeedback(
 export function analyzeCV(
   cv: string,
   jobSpec: string,
-  personality: PersonalityMode = 'supportive'
+  personality: PersonalityMode = 'confidence'
 ): CVStrengthAnalysis {
   // Extract keywords from job spec
   const jobKeywords = extractKeywords(jobSpec, 5);
@@ -220,9 +220,9 @@ function generateCVFeedback(
   alignment: number,
   strengths: string[],
   weaknesses: string[],
-  personality: PersonalityMode
+  personality: PersonalityMode = 'confidence'
 ): string {
-  if (personality === 'direct') {
+  if (personality === 'performance') {
     if (strength >= 8 && alignment >= 80) {
       return `✅ Your CV is strong (${strength}/10, ${alignment}% job alignment). Well-positioned for this role.`;
     } else if (strength >= 6 && alignment >= 60) {

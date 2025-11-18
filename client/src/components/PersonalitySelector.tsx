@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/PersonalitySelector.css';
 
-export type PersonalityMode = 'supportive' | 'direct';
+export type PersonalityMode = 'confidence' | 'performance';
 
 interface PersonalitySelectorProps {
   selectedPersonality: PersonalityMode;
@@ -16,29 +16,34 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
 }) => {
   return (
     <div className="personality-selector">
-      <label className="personality-label">Choose Your Coach:</label>
-      <div className="personality-options">
-        <button
-          className={`personality-button supportive ${selectedPersonality === 'supportive' ? 'active' : ''}`}
-          onClick={() => onPersonalityChange('supportive')}
-          disabled={disabled}
-          title="Supportive: Encouraging feedback with constructive guidance"
-        >
-          <span className="personality-icon">🤝</span>
-          <span className="personality-name">Supportive</span>
-          <span className="personality-desc">Encouraging & constructive</span>
-        </button>
-
-        <button
-          className={`personality-button direct ${selectedPersonality === 'direct' ? 'active' : ''}`}
-          onClick={() => onPersonalityChange('direct')}
-          disabled={disabled}
-          title="Direct: Honest, detailed feedback for focused preparation"
-        >
-          <span className="personality-icon">🎯</span>
-          <span className="personality-name">Direct Coach</span>
-          <span className="personality-desc">Honest & detailed feedback</span>
-        </button>
+      <label className="personality-label">Coaching Focus:</label>
+      <div className="personality-switch-container">
+        <div className="personality-switch">
+          <input
+            type="checkbox"
+            id="personality-toggle"
+            checked={selectedPersonality === 'performance'}
+            onChange={(e) => onPersonalityChange(e.target.checked ? 'performance' : 'confidence')}
+            disabled={disabled}
+            className="personality-checkbox"
+          />
+          <label htmlFor="personality-toggle" className="personality-toggle-label">
+            <span className="toggle-option confidence-option">
+              <span className="toggle-icon">🤝</span>
+              <span className="toggle-name">Confidence</span>
+            </span>
+            <span className="toggle-slider"></span>
+            <span className="toggle-option performance-option">
+              <span className="toggle-icon">🎯</span>
+              <span className="toggle-name">Performance</span>
+            </span>
+          </label>
+        </div>
+        <p className="personality-desc">
+          {selectedPersonality === 'confidence' 
+            ? "Build confidence with encouragement and constructive feedback"
+            : "Rigorous feedback to sharpen your performance"}
+        </p>
       </div>
     </div>
   );

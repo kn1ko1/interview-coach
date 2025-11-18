@@ -51,7 +51,7 @@ const SAMPLE_QUESTIONS = [
   },
 ];
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = false, cv = '', jobSpec = '', personality = 'supportive' }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onSubmit, isLoading = false, cv = '', jobSpec = '', personality = 'confidence' }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -201,7 +201,7 @@ ${answerScoringResult.feedback}`,
       : 0;
 
     let overallFeedback = '';
-    if (personality === 'direct') {
+    if (personality === 'performance') {
       if (score >= 80) {
         overallFeedback = "✅ Outstanding performance. You're ready for this role. No major concerns.";
       } else if (score >= 60) {
@@ -238,7 +238,7 @@ ${allAnswerScores
 ${overallFeedback}
 
 ---
-${personality === 'direct' 
+${personality === 'performance' 
   ? "Reflect on this feedback. What will you do differently?" 
   : "You're making progress. Keep building on your strengths!"}`;
 

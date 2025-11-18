@@ -8,7 +8,7 @@ import './Home.css';
 const Home: React.FC = () => {
     const [cv, setCv] = useState<File | null>(null);
     const [jobSpec, setJobSpec] = useState<string>('');
-    const [personality, setPersonality] = useState<PersonalityMode>('supportive');
+    const [personality, setPersonality] = useState<PersonalityMode>('confidence');
 
     const handleKeywordChange = (newKeywords: string[]) => {
         // Removed - keywords section is hidden

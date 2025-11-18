@@ -1,33 +1,33 @@
-export type PersonalityMode = 'supportive' | 'direct';
+export type PersonalityMode = 'confidence' | 'performance';
 
 /**
  * Get personality-specific system prompt enhancement
  */
 function getPersonalityPromptAddition(personality: PersonalityMode): string {
-  if (personality === 'direct') {
+  if (personality === 'performance') {
     return `
 
-PERSONALITY: You are a direct, rigorous interview coach. Provide honest, detailed feedback.
+PERSONALITY: You are a rigorous, performance-focused interview coach. Provide honest, detailed feedback.
 - Give clear, constructive critique
 - Highlight specific gaps in responses
 - Challenge vague or incomplete answers
 - Demand concrete examples and specifics
 - Be direct about areas needing improvement
-- Focus on performance gaps and solutions`;
+- Focus on performance gaps and actionable solutions`;
   }
   
   return `
 
-PERSONALITY: You are a supportive, encouraging interview coach. Provide constructive feedback.
+PERSONALITY: You are a supportive, confidence-building interview coach. Provide constructive feedback.
 - Acknowledge effort and strengths
 - Frame feedback positively but honestly
 - Suggest improvements gently
-- Celebrate progress
+- Celebrate progress and growth
 - Build confidence while maintaining honesty
-- Focus on growth and improvement`;
+- Focus on development and building skills`;
 }
 
-export async function chatComplete(systemPrompt: string, userPrompt: string, maxTokens = 600, personality: PersonalityMode = 'supportive') {
+export async function chatComplete(systemPrompt: string, userPrompt: string, maxTokens = 600, personality: PersonalityMode = 'confidence') {
   const apiKey = process.env.LLM_API_KEY;
   if (!apiKey) throw new Error("LLM_API_KEY not set");
   
